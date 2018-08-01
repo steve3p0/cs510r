@@ -30,11 +30,14 @@ pub fn reply(message: &str) -> &str
 
     // Yelling: numbers, punct, and !
     {
-        let r_special = r"[%\^*@#$()\[\]=+_\-`'&\\/{}|,?!<>~;:.]";
+        //let r_special = r"[%\^*@#$()\[\]=+_\-`'&\\/{}|,?!<>~;:.]";
+        let r_special = r"[%*@#$()=+_`'&/{}|,?!<>~;:.]";
+        let r_special_esc = r"[\^\[\]\-\\]";
 
         let r_1or_exc = r"(!+)";
         //let r_nums_punc = r"(([0-9A-Z]|[%\^*@#$()\[\]=+_\-`'&\\/{}|,?!<>~;:.])+\s*)+";
-        let r_nums_punc = format!(r"(([0-9A-Z]|{})+\s*)+", r_special);
+        //let r_nums_punc = format!(r"(([0-9A-Z]|{})+\s*)+", r_special);
+        let r_nums_punc = format!(r"(([0-9A-Z]|{}|{})+\s*)+", r_special, r_special_esc);
 
         let r = format!(r"^{}{}$", &r_nums_punc, r_1or_exc);
         //let r = format!(r"^({}{})|({}{})$", r_yell, r_0or_exc, r_yell, r_1or_exc);
