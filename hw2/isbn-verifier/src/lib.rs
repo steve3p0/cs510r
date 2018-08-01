@@ -4,25 +4,21 @@ use regex::Regex;
 /// Determines whether the supplied string is a valid ISBN number
 pub fn is_valid_isbn(isbn: &str) -> bool
 {
-    // match Regex to validate
-    println!("1 isbn: {}", isbn);
+    let re = Regex::new(r"^(\d-\d{3}-\d{5}-(\d|X)|\d{9}(\d|X))$").unwrap();
 
-    if match_isbn(isbn)
+    if re.is_match(isbn)
     {
-        //let mut last: u8 = 0;
         let (s , last) = split_x(isbn);
 
-        does_sum_mod11_eq0(s, last)
+        check_isbn(s, last)
     }
-    else
-    {
-        false
-    }
+    else { false }
 }
 
-fn does_sum_mod11_eq0(digits: &str, last: u16) -> bool
+// Inspired by:
+// https://www.wikiwand.com/en/International_Standard_Book_Number
+fn check_isbn(digits: &str, last: u16) -> bool
 {
-    //digits = digits.chars().rev().enumerate();
     let mut total = last;
 
     for (i, c) in digits.replace("-", "").chars().rev().enumerate()
@@ -35,12 +31,6 @@ fn does_sum_mod11_eq0(digits: &str, last: u16) -> bool
     }
 
     total % 11 == 0
-}
-
-fn match_isbn(s: &str) -> bool
-{
-    let re = Regex::new(r"^(\d-\d{3}-\d{5}-(\d|X)|\d{9}(\d|X))$").unwrap();
-    re.is_match(s)
 }
 
 fn split_x(mut s: &str) -> (&str, u16)
