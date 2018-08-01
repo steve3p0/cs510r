@@ -78,6 +78,15 @@ fn test_shouting_with_special_characters() {
 }
 
 #[test]
+fn test_shouting_with_fcked_special_characters() {
+    assert_eq!(
+        "Whoa, chill out!",
+        bob::reply("ZOMG THE %^*@#$ \\()/[]=+_-`'<>? (*^;:. ZOMBIES ARE COMING!!11!!1!")
+    );
+}
+
+
+#[test]
 fn test_shouting_with_no_exclamation_mark() {
     assert_eq!("Whoa, chill out!", bob::reply("I HATE YOU"));
 }

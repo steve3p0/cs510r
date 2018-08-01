@@ -31,7 +31,7 @@ pub fn reply(message: &str) -> &str
     // Yelling: numbers, punct, and !
     {
         let r_1or_exc = r"(!+)";
-        let r_nums_punc = r"(([0-9A-Z]|[^\P{P}\?])+\s*)+";
+        let r_nums_punc = r"(([0-9A-Z]|[%\^*@#$()\[\]=+_\-`'&\\/{}|,?!<>~;:.])+\s*)+";
 
         let r = format!(r"^{}{}$", r_nums_punc, r_1or_exc);
         //let r = format!(r"^({}{})|({}{})$", r_yell, r_0or_exc, r_yell, r_1or_exc);
@@ -49,7 +49,16 @@ pub fn reply(message: &str) -> &str
 //    let r_1or_exc = r"(!+)";
 
     //let r_yell = r"(([0-9A-Z]|[^\P{P}\?])+\s*)+";
-    let r_yell = r"(([A-Z]|[^\P{P}\?])+\s*)+";
+    // .^$*+?()[{\|
+
+    //%^*@#$(^
+    //"
+    //let r_spec = r"%\^\*@#\$\(";
+
+    let r_spec = r"%";
+    //\^\*@#\$\(]
+    //let r_spec = r"!@#\$%\^&\*\(\)_+\-=\[\]{};':\\\|,.<>\/\?";
+    let r_yell = r"(([A-Z]|[%\^])+\s*)+";
     let r_0or_exc = r"(!*)";
     //let r_1or_exc = r"(!+)";
 
