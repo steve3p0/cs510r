@@ -10,6 +10,8 @@ pub fn reply(message: &str) -> &str
     { return "Fine. Be that way!"}
 
     // Yell Ask
+    //^([A-Z]+\s*)+(\?+)$
+    //^(([0-9A-Z]|[^\P{P}\?])+\s*)+(\?+)$
     let mut re = Regex::new(r"^([A-Z]+\s*)+(\?+)$").unwrap();
     if re.is_match(msg)
     { return "Calm down, I know what I'm doing!" }
@@ -19,12 +21,46 @@ pub fn reply(message: &str) -> &str
     if msg.ends_with("?")
     { return "Sure." }
 
-    // All Caps
-    //^([A-Z]+\s*)+(\!*)$
-    re = Regex::new(r"^([A-Z]+\s*)+(!*)$").unwrap();
-    if re.is_match(msg)
-    { return "Whoa, chill out!" }
+    // Yelling
+    // ^([A-Z]+\s*)+(\!*)$
+    // (([0-9A-Z]|[^\P{P}\?])+\s*)+(!*)
+    //^(([0-9A-Z]|[^\P{P}\?])+\s*)+(!*))$
 
+
+
+    // Yelling: numbers, punct, and !
+    {
+        let r_1or_exc = r"(!+)";
+        let r_nums_punc = r"(([0-9A-Z]|[^\P{P}\?])+\s*)+";
+
+        let r = format!(r"^{}{}$", r_nums_punc, r_1or_exc);
+        //let r = format!(r"^({}{})|({}{})$", r_yell, r_0or_exc, r_yell, r_1or_exc);
+
+        re = Regex::new(&r).unwrap();
+        if bob_match(&r, msg)
+        { return "Whoa, chill out!" }
+    }
+//
+//    re = Regex::new(&r).unwrap();
+//    if re.is_match(msg)
+//        { return "Whatever." }
+//
+//    let r_0or_exc = r"(!*)";
+//    let r_1or_exc = r"(!+)";
+
+    //let r_yell = r"(([0-9A-Z]|[^\P{P}\?])+\s*)+";
+    let r_yell = r"(([A-Z]|[^\P{P}\?])+\s*)+";
+    let r_0or_exc = r"(!*)";
+    //let r_1or_exc = r"(!+)";
+
+    {
+        let r = format!(r"^{}{}$", r_yell, r_0or_exc);
+        //let r = format!(r"^({}{})|({}{})$", r_yell, r_0or_exc, r_yell, r_1or_exc);
+
+        re = Regex::new(&r).unwrap();
+        if bob_match(&r, msg)
+        { return "Whoa, chill out!" }
+    }
 
 
     "Whatever."
@@ -35,4 +71,12 @@ pub fn reply(message: &str) -> &str
 
 
     //unimplemented!("have Bob reply to the incoming message: {}", message)
+}
+
+fn bob_match(r: &str, msg: &str) -> bool
+{
+    println!("r: {}", r);
+
+    let re = Regex::new(r).unwrap();
+    return  re.is_match(msg)
 }

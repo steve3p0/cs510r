@@ -55,25 +55,21 @@ fn test_forceful_question() {
 }
 
 #[test]
-#[ignore]
 fn test_shouting_numbers() {
     assert_eq!("Whoa, chill out!", bob::reply("1, 2, 3 GO!"));
 }
 
 #[test]
-#[ignore]
 fn test_only_numbers() {
     assert_eq!("Whatever.", bob::reply("1, 2, 3"));
 }
 
 #[test]
-#[ignore]
 fn test_question_with_only_numbers() {
     assert_eq!("Sure.", bob::reply("4?"));
 }
 
 #[test]
-#[ignore]
 fn test_shouting_with_special_characters() {
     assert_eq!(
         "Whoa, chill out!",
