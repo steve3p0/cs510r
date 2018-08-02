@@ -2,6 +2,13 @@ extern crate regex;
 
 use regex::Regex;
 
+struct Operation
+{
+    operand: i32,
+    operator: String,
+}
+
+
 pub fn answer(command: &str) -> i64
 {
 
@@ -18,76 +25,86 @@ pub fn answer(command: &str) -> i64
 
 pub fn simple_answer(command: &str) -> i64
 {
+    // Vector for getting the Operations: operator operand
+    let mut operations: Vec<Operation> = Vec::new();
+
+    // Get the first operand - set it's operator to plus
+    let r = r"(?:What\sis\s)([0-9]+)";
+    let re = Regex::new(r).unwrap();
+    let m = re.find(command).unwrap();
+
+    let operator = "plus".to_string();
+    let operand = m.as_str().parse::<i32>().unwrap();
+    let operation1 = Operation { operand: operand, operator: operator };
+
+    println!("operation1: {}", m.as_str());
+    println!("operator1: {}", operation1.operator);
+    println!("operand1: {}", operation1.operand);
+    println!();
+
+    operations.push(operation1 );
+
     // Now get the operands
-    let pattern = r"\d+";
+    //let pattern = r"\d+";
+    let pattern = r"plus\s\d+";
     let regex = match Regex::new(pattern)
     {
         Ok(r) => r,
         Err(e) => { panic!("Could not compile regex: {}", e); }
     };
 
-    let operands = regex.find_iter(command);
+    let matches = regex.find_iter(command);
 
-    for o in operands
+    for m in matches
     {
-        println!("operand: {}", o.as_str());
-    }
+        let mut s = m.as_str().split_whitespace();
+        let operator = s.next().unwrap().to_string();
+        let operand = s.next().unwrap().parse::<i32>().unwrap();
+        let operation = Operation { operand: operand, operator: operator };
 
-    // Now get the operators
-    let pattern = r"plus|minus|multiplied\sby|divided\sby";
-    let regex = match Regex::new(pattern)
-    {
-        Ok(r) => r,
-        Err(e) => { panic!("Could not compile regex: {}", e); }
-    };
+        println!("operation: {}", m.as_str());
+        println!("operator: {}", operation.operator);
+        println!("operand: {}", operation.operand);
+        println!();
 
-    let operators = regex.find_iter(command);
-
-    for o in operators
-    {
-        println!("operator: {}", o.as_str());
-    }
-
-    // Now get the operators
-    let pattern = r"plus|minus|multiplied\sby|divided\sby";
-
-    let ops = get_matches(pattern, command);
-
-    for o in ops
-    {
-        println!("operator: {}", o);
+        operations.push(operation );
     }
 
     0
 }
 
-fn get_matches(pattern: &str, s: &str) -> Matches
-{
-    let regex = match Regex::new(pattern)
-    {
-        Ok(r) => r,
-        Err(e) => { panic!("Could not compile regex: {}", e); }
-    };
-
-    let operators = regex.find_iter(s);
-
-    for o in operators
-    {
-        println!("operator: {}", o.as_str());
-    }
-}
+//fn get_matches(pattern: &str, s: &str) -> Matches
+//{
+//    let regex = match Regex::new(pattern)
+//    {
+//        Ok(r) => r,
+//        Err(e) => { panic!("Could not compile regex: {}", e); }
+//    };
+//
+//    let operators = regex.find_iter(s);
+//
+//    for o in operators
+//    {
+//        println!("operator: {}", o.as_str());
+//    }
+//}
 
 
 pub fn simple_answer2(command: &str) -> i64
 {
 
-    // get first operand
-    let r = r"(?:What\sis\s)([0-9]+)";
-    let re = Regex::new(r).unwrap();
-    let caps = re.captures(command).unwrap();
-    let operand1:i32 = caps.get(1).unwrap().as_str().parse().unwrap();
-
-    println!("operand1: {}", operand1);
+//    // get first operand
+//    let r = r"(?:What\sis\s)([0-9]+)";
+//    let re = Regex::new(r).unwrap();
+//    let operand1 = match re
+//    {
+//        _ => {}
+//    }
+//
+//    let caps = re.captures(command).unwrap();
+//    let operand1:i32 = caps.get(1).unwrap().as_str().parse().unwrap();
+//
+//    println!("operand1: {}", operand1);
 
 //    // Now for the rest
 //    let pat = r"/\d+/g";
