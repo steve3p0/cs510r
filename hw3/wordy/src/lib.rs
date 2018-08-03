@@ -11,16 +11,7 @@ struct Operation
 
 pub fn answer(command: &str) -> i64
 {
-
-
-    //let r = r"^([A-Z]+\s*)+(\?+)$";
-    //let re = Regex::new(r).unwrap();
-
-
-    //if  re.is_match(command)
-
     0
-
 }
 
 pub fn simple_answer(command: &str) -> i64
@@ -28,16 +19,17 @@ pub fn simple_answer(command: &str) -> i64
     // Vector for getting the Operations: operator operand
     let mut operations: Vec<Operation> = Vec::new();
 
-    // Get the first operand - set it's operator to plus
-    let r = r"(?:What\sis\s)([0-9]+)";
+    let r = r"What\sis\s(?:([0-9]+))";
     let re = Regex::new(r).unwrap();
-    let m = re.find(command).unwrap();
+    let caps = re.captures(command).unwrap();
+    let op1 = caps.get(1).unwrap().as_str();
+    assert_eq!(op1, "5");
 
     let operator = "plus".to_string();
-    let operand = m.as_str().parse::<i32>().unwrap();
+    let operand = op1.parse::<i32>().unwrap();
     let operation1 = Operation { operand: operand, operator: operator };
 
-    println!("operation1: {}", m.as_str());
+    //println!("operation1: {}", m.as_str());
     println!("operator1: {}", operation1.operator);
     println!("operand1: {}", operation1.operand);
     println!();
@@ -47,7 +39,7 @@ pub fn simple_answer(command: &str) -> i64
     // Now get the operands
     //let pattern = r"\d+";
     let pattern = r"plus\s\d+";
-    let regex = match Regex::new(pattern)
+    let regex= match Regex::new(pattern)
     {
         Ok(r) => r,
         Err(e) => { panic!("Could not compile regex: {}", e); }
@@ -72,6 +64,15 @@ pub fn simple_answer(command: &str) -> i64
 
     0
 }
+
+
+//    let m = re.find(command).unwrap();
+//let caps = re.captures(command).unwrap();
+//let text1 = caps.get(1).map_or("", |m| m.as_str());
+//let text2 = caps.get(2).map_or("", |m| m.as_str());
+//assert_eq!(text1, "5");
+//assert_eq!(text2, "");
+
 
 //fn get_matches(pattern: &str, s: &str) -> Matches
 //{
