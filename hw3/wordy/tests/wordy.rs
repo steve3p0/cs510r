@@ -1,4 +1,6 @@
 extern crate wordy;
+#[macro_use]
+extern crate log;
 
 use wordy::*;
 
