@@ -54,10 +54,10 @@ impl WordProblem
     fn get_operand(pattern: &str, s: &str) -> Operation
     {
         let re= match Regex::new(pattern)
-        {
-            Ok(r) => r,
-            Err(e) => { panic!("Could not compile regex: {}", e); }
-        };
+            {
+                Ok(r) => r,
+                Err(e) => { panic!("Could not compile regex: {}", e); }
+            };
 
         let caps = re.captures(s).unwrap();
         let op1 = caps.get(1).unwrap().as_str();
@@ -77,27 +77,27 @@ impl WordProblem
     fn get_operations(mut operations: Vec<Operation>, pattern: &str, s: &str) -> Vec<Operation>
     {
         let re= match Regex::new(pattern)
-        {
-            Ok(r) => r,
-            Err(e) => { panic!("Could not compile regex: {}", e); }
-        };
+            {
+                Ok(r) => r,
+                Err(e) => { panic!("Could not compile regex: {}", e); }
+            };
 
         let matches = re.find_iter(s);
 
         for m in matches
-        {
-            let mut s = m.as_str().split_whitespace();
-            let operator = s.next().unwrap().to_string();
-            let operand = s.next().unwrap().parse::<i32>().unwrap();
-            let operation = Operation::new(operand, operator);
+            {
+                let mut s = m.as_str().split_whitespace();
+                let operator = s.next().unwrap().to_string();
+                let operand = s.next().unwrap().parse::<i32>().unwrap();
+                let operation = Operation::new(operand, operator);
 
-            println!("operation: {}", m.as_str());
-            println!("operand: {}", operation.operand);
-            println!("operator: {}", operation.operator);
-            println!();
+                println!("operation: {}", m.as_str());
+                println!("operand: {}", operation.operand);
+                println!("operator: {}", operation.operator);
+                println!();
 
-            operations.push(operation );
-        }
+                operations.push(operation );
+            }
 
         operations
     }
@@ -107,29 +107,24 @@ impl WordProblem
         let mut total = x;
 
         for o in &operations
-        {
-            print!("{} ", total);
-
-            total = match o.operator.as_str()
             {
-                "plus" =>  total + o.operand,
-                "minus" =>  total - o.operand,
-                "multiplied" =>  total * o.operand,
-                "divided" =>  total / o.operand,
-                _ => panic!("Operator not found: {}", o.operator)
-            };
+                print!("{} ", total);
 
-            print!("{} ", o.operator);
-            print!("{} ", o.operand);
-            println!("= {}", total);
-        }
+                total = match o.operator.as_str()
+                    {
+                        "plus" =>  total + o.operand,
+                        "minus" =>  total - o.operand,
+                        "multiplied" =>  total * o.operand,
+                        "divided" =>  total / o.operand,
+                        _ => panic!("Operator not found: {}", o.operator)
+                    };
+
+                print!("{} ", o.operator);
+                print!("{} ", o.operand);
+                println!("= {}", total);
+            }
 
         println!("Grand Total = {}", total);
         total
     }
 }
-
-
-
-
-
