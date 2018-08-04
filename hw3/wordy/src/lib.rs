@@ -101,7 +101,7 @@ impl WordProblem
 
             debug!("operation: {}\noperand: {}\noperator: {}\n\n", m.as_str(), operation.operand, operation.operator);
 
-            &self.operations.push(operation );
+            self.operations.push(operation );
         }
     }
 
