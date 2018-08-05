@@ -16,7 +16,6 @@ fn primes_up_to_10() {
 }
 
 #[test]
-#[ignore]
 fn limit_is_prime() {
     assert_eq!(sieve::primes_up_to(13), [2, 3, 5, 7, 11, 13]);
 }
