@@ -1,8 +1,3 @@
-//extern crate itertools; // 0.7.8
-//use itertools::Itertools;
-//
-//pub struct Bit { val: bool }
-
 // Inspired by:
 // https://www.wikiwand.com/en/Sieve_of_Eratosthenes#/Algorithm_and_variants
 pub fn primes_up_to(upper_bound: u64) -> Vec<u64>
@@ -12,7 +7,6 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64>
     let mut i= 2;
 
     println!("sqrt({}): {}", upper_bound, (i as f64).sqrt());
-    //while i < upper_bound
     while (i as f64) <= (upper as f64).sqrt()
     {
         if array[i] == 1
@@ -39,7 +33,7 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64>
     let mut a: Vec<u64> = Vec::new();
 
     let mut i = 2;
-    while i <= upper
+    while i < upper
     {
         if array[i] == 1
         {
