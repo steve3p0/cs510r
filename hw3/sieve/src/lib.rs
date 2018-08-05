@@ -5,8 +5,9 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64>
     let upper = upper_bound as usize;
     let mut array = vec![1; upper + 1];
     let mut i= 2;
+    let upper_sqrt = (i as f64).sqrt();
+    println!("sqrt({}): {}", upper_bound, upper_sqrt);
 
-    println!("sqrt({}): {}", upper_bound, (i as f64).sqrt());
     while (i as f64) <= (upper as f64).sqrt()
     {
         if array[i] == 1
@@ -17,7 +18,7 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64>
             println!("j: {}", j);
             println!("step: {}", step);
 
-            while j < upper
+            while j <= upper
             {
                 array[j] = 0;
                 println!("array[{}]: {}", j, array[j]);
@@ -33,7 +34,7 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64>
     let mut a: Vec<u64> = Vec::new();
 
     let mut i = 2;
-    while i < upper
+    while i <= upper
     {
         if array[i] == 1
         {
