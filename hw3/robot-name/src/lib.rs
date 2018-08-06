@@ -14,7 +14,7 @@ impl Robot
     {
         check_duplicates(200000);
 
-        let rnd_name = random();
+        let rnd_name = Robot::random();
         Robot { name: rnd_name }
     }
 
@@ -27,7 +27,7 @@ impl Robot
     {
         loop
         {
-            let rnd_name = random();
+            let rnd_name = Robot::random();
 
             if rnd_name != self.name
             {
@@ -36,87 +36,44 @@ impl Robot
             }
         }
     }
-}
 
-fn has_unique_elements<T>(iter: T) -> bool
-    where
-        T: IntoIterator,
-        T::Item: Eq + Hash,
-{
-    let mut uniq = HashSet::new();
-    let duplicate = iter.into_iter().all(move |x| uniq.insert(x));
-
-    println!("DUPLICATION: {}", duplicate );
-    duplicate
-}
-
-
-pub fn check_duplicates(n: u32)
-{
-    let mut hashes: Vec<String> = Vec::new();
-
-    let tenth = n / 10;
-    println!("1/10: {}", tenth);
-    //let tenth = (0.10 * n) as u32;
-
-    for i in 0..n
+    pub fn random() -> String
     {
-        let rnd = random();
-        //println!("base26_alpha({}): {}", i, rnd);
-        hashes.push(rnd);
+        // n[0..2].chars().all(|c| c >= 'A' && c <= 'Z'),
+        //n[2..].chars().all(|c| c >= '0' && c <= '9')
 
-        let x = i + 1; //i + 1;
-        if x % tenth == 0
-        {
-            println!("{}% : {} random numbers", 10 * (x / tenth), x); //, n / i
-        }
+        // 26 X 26 = 676
+        // 10 x 10 x 10 = 1000
+        // 647 x 1000 = 676,000
 
+        let mut nano_u32:u32 = time::get_time().nsec as u32;
+        //println!("\nNanoseconds: {}", nano_u32);
+
+        nano_u32 += 1;
+        let mut nano_string = right(nano_u32.to_string(), 6);
+        //println!("Nanoseconds as string: {}", nano_string);
+
+        let mut prefix_i32 = left(nano_string.clone(), 3).parse::<i32>().unwrap();
+        //println!("prefix_i32: {}", prefix_i32);
+
+        if prefix_i32 > 675
+            {
+                prefix_i32 -= 400;
+
+                nano_string = left(nano_string,3);
+                nano_string.push('0');
+            }
+
+        let suffix = right(nano_string, 3);
+        let prefix_string = base26_alpha(prefix_i32);
+        let random = format!("{}{}", prefix_string, suffix);
+
+        random
     }
 
-    if has_unique_elements(hashes) == true
-    {
-        println!("HAS DUPLICATIONS");
-    }
-    else
-    {
-        println!("NO DUPLICATIONS")
-    }
 }
 
 
-pub fn random() -> String
-{
-    // n[0..2].chars().all(|c| c >= 'A' && c <= 'Z'),
-    //n[2..].chars().all(|c| c >= '0' && c <= '9')
-
-    // 26 X 26 = 676
-    // 10 x 10 x 10 = 1000
-    // 647 x 1000 = 676,000
-
-    let mut nano_u32:u32 = time::get_time().nsec as u32;
-    //println!("\nNanoseconds: {}", nano_u32);
-
-    nano_u32 += 1;
-    let mut nano_string = right(nano_u32.to_string(), 6);
-    //println!("Nanoseconds as string: {}", nano_string);
-
-    let mut prefix_i32 = left(nano_string.clone(), 3).parse::<i32>().unwrap();
-    //println!("prefix_i32: {}", prefix_i32);
-
-    if prefix_i32 > 675
-    {
-        prefix_i32 -= 400;
-
-        nano_string = left(nano_string,3);
-        nano_string.push('0');
-    }
-
-    let suffix = right(nano_string, 3);
-    let prefix_string = base26_alpha(prefix_i32);
-    let random = format!("{}{}", prefix_string, suffix);
-
-    random
-}
 
 
 pub fn left(s: String, n: usize) -> String
@@ -208,3 +165,50 @@ pub fn divmod(n: i32) -> (i32, i32)
 
     (a, b)
 }
+
+
+fn has_unique_elements<T>(iter: T) -> bool
+    where
+        T: IntoIterator,
+        T::Item: Eq + Hash,
+{
+    let mut uniq = HashSet::new();
+    let duplicate = iter.into_iter().all(move |x| uniq.insert(x));
+
+    println!("DUPLICATION: {}", duplicate );
+    duplicate
+}
+
+
+pub fn check_duplicates(n: u32)
+{
+    let mut hashes: Vec<String> = Vec::new();
+
+    let tenth = n / 10;
+    println!("1/10: {}", tenth);
+    //let tenth = (0.10 * n) as u32;
+
+    for i in 0..n
+    {
+        let rnd = Robot::random();
+        //println!("base26_alpha({}): {}", i, rnd);
+        hashes.push(rnd);
+
+        let x = i + 1; //i + 1;
+        if x % tenth == 0
+        {
+            println!("{}% : {} random numbers", 10 * (x / tenth), x); //, n / i
+        }
+
+    }
+
+    if has_unique_elements(hashes) == true
+    {
+        println!("HAS DUPLICATIONS");
+    }
+    else
+    {
+        println!("NO DUPLICATIONS")
+    }
+}
+
