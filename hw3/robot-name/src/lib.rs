@@ -1,5 +1,7 @@
 extern crate time;
-extern crate radix_fmt;
+
+use std::collections::HashSet;
+use std::hash::Hash;
 
 pub struct Robot
 {
@@ -10,89 +12,154 @@ impl Robot
 {
     pub fn new() -> Robot
     {
-        // n[0..2].chars().all(|c| c >= 'A' && c <= 'Z'),
-        //n[2..].chars().all(|c| c >= '0' && c <= '9')
+        check_duplicates(200000);
 
-        // 26 X 26 = 676
-        // 10 x 10 x 10 = 1000
-        // 647 x 1000 = 676,000
-
-        // name[0]: A-Z: 26     // month
-        // name[1]: A-Z: 26     // day
-        // name[2]: 0-9: 10     // year
-        // name[3]: 0-9: 10     // hour
-        // name[4]: 0-9: 10     // minute
-
-//        let c = 'A';
-//        println!("A: {}", c.to_digit());
-
-        // 1533539770.9886765
-        //             676000
-        //             6 7 6 0 0 0
-        //
-        //
-
-        // 1533539770.9886765
-        // 1533539770.9 8 8 6 7 6 5
-        //                        0-9
-        //                        A-J
-
-//        let codepoint_array: Vec<u8> = "B".into();
-//        //let codepoints: Vec<char> = codepoint_array.into_iter().map(char::from).collect();
-//        //println!("{:?}", codepoints);
-//
-//
-//        let point = codepoint_array.get(0);
-//        println!("point: {}", point.unwrap());
-
-//        let p1 = prefix + 10; //  + 65;
-//        //let c1 = radix_fmt::radix_36(p1).;
-//        println!("Base26({}): {}", prefix, c1);
-//        println!("Base26({}): {}", prefix, radix_fmt::radix_36(p1)); //radix_fmt(676, 26));
-//        //println!("Base26({}): {}", prefix, radix_fmt::radix_26(prefix)); //radix_fmt(676, 26));
-
-
-        for i in 0..676
-        {
-            let prefix = base26_alpha(i);
-            println!("base26_alpha({}): {}", i, prefix);
-        }
-
-
-        let rnd_name = "AB123".to_string();
+        let rnd_name = random();
         Robot { name: rnd_name }
-        //unimplemented!("Not implemented")
     }
-
-
 
     pub fn name<'a>(&'a self) -> &'a str
     {
         &self.name
-        //unimplemented!("Not implemented")
     }
 
     pub fn reset_name(&mut self)
     {
-        unimplemented!("Not implemented")
+        loop
+        {
+            let rnd_name = random();
+
+            if rnd_name != self.name
+            {
+                self.name = rnd_name;
+                break;
+            }
+        }
     }
 }
 
-// Inspired by:
-// https://stackoverflow.com/questions/48983939/convert-a-number-to-base-26
+fn has_unique_elements<T>(iter: T) -> bool
+    where
+        T: IntoIterator,
+        T::Item: Eq + Hash,
+{
+    let mut uniq = HashSet::new();
+    let duplicate = iter.into_iter().all(move |x| uniq.insert(x));
+
+    println!("DUPLICATION: {}", duplicate );
+    duplicate
+}
+
+
+pub fn check_duplicates(n: u32)
+{
+    let mut hashes: Vec<String> = Vec::new();
+
+    let tenth = n / 10;
+    println!("1/10: {}", tenth);
+    //let tenth = (0.10 * n) as u32;
+
+    for i in 0..n
+    {
+        let rnd = random();
+        //println!("base26_alpha({}): {}", i, rnd);
+        hashes.push(rnd);
+
+        let x = i + 1; //i + 1;
+        if x % tenth == 0
+        {
+            println!("{}% : {} random numbers", 10 * (x / tenth), x); //, n / i
+        }
+
+    }
+
+    if has_unique_elements(hashes) == true
+    {
+        println!("HAS DUPLICATIONS");
+    }
+    else
+    {
+        println!("NO DUPLICATIONS")
+    }
+}
+
+
+pub fn random() -> String
+{
+    // n[0..2].chars().all(|c| c >= 'A' && c <= 'Z'),
+    //n[2..].chars().all(|c| c >= '0' && c <= '9')
+
+    // 26 X 26 = 676
+    // 10 x 10 x 10 = 1000
+    // 647 x 1000 = 676,000
+
+    let mut nano_u32:u32 = time::get_time().nsec as u32;
+    //println!("\nNanoseconds: {}", nano_u32);
+
+    nano_u32 += 1;
+    let mut nano_string = right(nano_u32.to_string(), 6);
+    //println!("Nanoseconds as string: {}", nano_string);
+
+    let mut prefix_i32 = left(nano_string.clone(), 3).parse::<i32>().unwrap();
+    //println!("prefix_i32: {}", prefix_i32);
+
+    if prefix_i32 > 675
+    {
+        prefix_i32 -= 400;
+
+        nano_string = left(nano_string,3);
+        nano_string.push('0');
+    }
+
+    let suffix = right(nano_string, 3);
+    let prefix_string = base26_alpha(prefix_i32);
+    let random = format!("{}{}", prefix_string, suffix);
+
+    random
+}
+
+
+pub fn left(s: String, n: usize) -> String
+{
+    let len = s.len();
+    let mut s_right = s;
+
+    if len < n
+    {
+        let mut dif = n - len;
+        while dif > 0
+        {
+            s_right.push('0');
+
+            dif += 1;
+        }
+    }
+
+    s_right.chars().take(n).collect::<String>()
+}
+
+pub fn right(s: String, n: usize) -> String
+{
+    let len = s.len();
+    let mut s_right = s;
+
+    if len < n
+    {
+        let mut dif = n - len;
+        while dif > 0
+        {
+            s_right.push('0');
+
+            dif += 1;
+        }
+    }
+
+    let start = len - n;
+    s_right.chars().skip(start).take(len).collect::<String>()
+}
+
 pub fn base26_alpha(mut n: i32) -> String
 {
-    // 0 = AA
-    // 1 = AB
-    // 2 = AC
-    // 3 = AD
-    // 4 = AE
-
-    // 25 = AZ
-    // 26 = AA
-    // 27 = AB
-    // 28 = AC
-
     //let mut n = num; // 123;
     let mut chars: Vec<char> = Vec::new();
 
@@ -138,49 +205,6 @@ pub fn divmod(n: i32) -> (i32, i32)
         a = a - 1;
         b = b + 26;
     }
-//    else if b == 1
-//    {
-//        a = a - 1;
-//        b = b + 26;
-//    }
 
     (a, b)
 }
-
-
-
-
-
-//Time Stamp 1:  1533539770.9886765
-//Time Stamp 2:  1533539770.9886773
-//Time Stamp 3:  1533539770.9886777
-//Time Stamp 4:  1533539770.9886785
-//Time Stamp 5:  1533539770.988679
-//Time Stamp 6:  1533539770.9886794
-//Time Stamp 7:  1533539770.98868
-//Time Stamp 8:  1533539770.9886804
-//Time Stamp 9:  1533539770.9886808
-//Time Stamp 10: 1533539770.9886813
-
-
-// Time Stamp: 1533539292.3725164
-// Time Stamp: 1533539332.662702
-// Time Stamp: 1533539338.824166
-// Time Stamp: 1533539376.6954174
-// Time Stamp: 1533539434.514298
-
-// 26 X 26 = 676
-// 10 x 10 x 10 = 1000
-// 647 x 1000 = 676,000
-
-// name[0]: A-Z: 26     // month
-// name[1]: A-Z: 26     // day
-// name[2]: 0-9: 10     // year
-// name[3]: 0-9: 10     // hour
-// name[4]: 0-9: 10     // minute
-
-// name[0]: A-Z: 26     // minute
-// name[1]: A-Z: 26     // second
-// name[2]: 0-9: 10     //
-// name[3]: 0-9: 10     //
-// name[4]: 0-9: 10     //
