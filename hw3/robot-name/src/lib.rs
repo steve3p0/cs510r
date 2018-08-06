@@ -51,31 +51,13 @@ impl Robot
 //        println!("Base26({}): {}", prefix, radix_fmt::radix_36(p1)); //radix_fmt(676, 26));
 //        //println!("Base26({}): {}", prefix, radix_fmt::radix_26(prefix)); //radix_fmt(676, 26));
 
-        // 0 = AA
-        // 1 = AB
-        // 2 = AC
-        // 3 = AD
-        // 4 = AE
 
-        //let prefix = 675;
-        let prefix = 28;
-        let mut num = prefix; // 123;
-        let mut chars: Vec<char> = Vec::new();
-
-        while num > 0
+        for i in 0..676
         {
-            let (a, b) = divmod(num);
-            num = a;
-
-            let c = (b + 64) as u8 as char;
-
-            chars.push(c);
+            let prefix = base26_alpha(i);
+            println!("base26_alpha({}): {}", i, prefix);
         }
 
-        let hash: String = chars.iter().rev().collect();
-
-        println!("int2ascii({}): {:?}", prefix, hash);
-        println!("int2ascii({}): {:?}", prefix, chars);
 
         let rnd_name = "AB123".to_string();
         Robot { name: rnd_name }
@@ -96,16 +78,71 @@ impl Robot
     }
 }
 
-pub fn divmod(n: u32) -> (u32, u32)
+// Inspired by:
+// https://stackoverflow.com/questions/48983939/convert-a-number-to-base-26
+pub fn base26_alpha(mut n: i32) -> String
+{
+    // 0 = AA
+    // 1 = AB
+    // 2 = AC
+    // 3 = AD
+    // 4 = AE
+
+    // 25 = AZ
+    // 26 = AA
+    // 27 = AB
+    // 28 = AC
+
+    //let mut n = num; // 123;
+    let mut chars: Vec<char> = Vec::new();
+
+    loop
+    {
+        let (a, b) = divmod(n);
+        n = a;
+
+        let c = itoa(b); // b + 65) as u8 as char;
+
+        chars.push(c);
+
+        if n == 0 { break; }
+    }
+
+    if chars.len() < 2
+    {
+        chars.push('A');
+    }
+
+    chars.reverse();
+    let hash: String = chars.iter().collect();
+
+    //println!("int2ascii({}): {:?}", num, chars);
+
+    hash
+}
+
+pub fn itoa(n: i32) -> char
+{
+    let c = (n + 65) as u8 as char;
+
+    c
+}
+
+pub fn divmod(n: i32) -> (i32, i32)
 {
     let mut a = n / 26;
     let mut b= n % 26;
 
-    if b == 0
+    if b == 26
     {
         a = a - 1;
         b = b + 26;
     }
+//    else if b == 1
+//    {
+//        a = a - 1;
+//        b = b + 26;
+//    }
 
     (a, b)
 }
