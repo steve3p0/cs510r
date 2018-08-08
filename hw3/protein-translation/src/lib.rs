@@ -43,20 +43,20 @@ impl <'a>Proteins<'a>
             return Err("Invalid RNA sequence");
         }
 
-
         let mut proteins: Vec<&str> = Vec::new();
         let mut s = rna_sequence;
-        //let mut skip = 0;
 
         while !s.is_empty()
         {
-            //let condon = rna_sequence.skip(skip).take(3) as &str;
-            //.chars()
             let (condon, rest) = s.split_at(3);
+            let name = self.name_for(condon);
+
+            if name.is_err()
+            {
+                return Err("Invalid RNA sequence");
+            }
 
             let name = self.name_for(condon).unwrap();
-
-            //let name = self.name_for(condon).unwrap();
 
             if name == "stop codon"
             {
