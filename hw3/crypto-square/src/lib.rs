@@ -1,15 +1,11 @@
 extern crate regex;
 
-use regex::Regex;
+//use regex::Regex;
 
 pub fn encrypt(input: &str) -> String
 {
-    let mut s = fmt_str(input.to_string()); // = &input.replace(" ", "");
-    let (c, r) = get_square(input);
-
-    println!("cunt: [{}]", s);
-
-
+    let s = fmt_str(input.to_string());
+    let (c, r) = get_square(&s);
 
     unimplemented!("Encrypt {:?} using a square code", input)
 }
@@ -17,16 +13,12 @@ pub fn encrypt(input: &str) -> String
 pub fn get_square(s: &str) -> (usize, usize)
 {
     let len = s.len();
-    let mut c = (len as f64).sqrt().ceil() as usize;
-    let mut r = 0;
+    let c = (len as f64).sqrt().ceil() as usize;
+    let mut r = c;
 
-    if len % c == 0
+    if len % r != 0
     {
-        r = c;
-    }
-    else
-    {
-        r = c - 1;
+        r -= 1;
     }
 
     println!("len: {}, c: {}, r: {}", len, c, r);
@@ -34,13 +26,15 @@ pub fn get_square(s: &str) -> (usize, usize)
     (c, r)
 }
 
-pub fn fmt_str(mut input: String) -> String
+pub fn fmt_str(input: String) -> String
 {
 
-    let mut v1 = input.to_lowercase().replace(",", "").replace(".", "").replace(" ", "");
+    // let mut s = input.to_lowercase().replace(",", "").replace(".", "").replace(" ", "");
+    let s = input.to_lowercase().replace(",", "").replace(".", "").replace(" ", "");
 
+    println!("s after formatting: [{}]", s);
 
-    v1
+    s
 
     //.replace(".", "").replace(" ", "").as_str()
 
@@ -66,7 +60,7 @@ pub fn fmt_str(mut input: String) -> String
 //
 //    let re = Regex::new(r"[A-Za-z]").unwrap();
 //    let s1 = re.replace(" ", "");
-//    println!("cunt fucker: {}", s1); // => "xxxxx xxxxx!"
+//    println!("s1: {}", s1); // => "xxxxx xxxxx!"
 //
 ////    let mut re = Regex::new(r"[A-Za-z]");
 ////    let r = re.unwrap(); //.replace_all("Hello World!", "x");
@@ -74,5 +68,4 @@ pub fn fmt_str(mut input: String) -> String
 //
 //    println!("{}", s1); // => "xxxxx xxxxx!"
 
-    //"fuck off"
 }
