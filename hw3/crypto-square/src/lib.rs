@@ -25,7 +25,7 @@ fn build_square(c: usize, r: usize, s: &str) -> Vec<&str>
 
     let mut square:Vec<&str> = Vec::new();
 
-    for _i in 0..c
+    for _i in 1..c
     {
         let mut col_length = c;
         // let mut row = "";
