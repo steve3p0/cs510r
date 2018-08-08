@@ -4,12 +4,17 @@ extern crate regex;
 
 pub fn encrypt(input: &str) -> String
 {
+    if input == ""
+    {
+        return "".to_string()
+    }
+
     let s = fmt_str(input.to_string());
     let (c, r) = get_dimen(&s);
 
     let square = build_square(c, r, s);
 
-    println!("{:?}", square);
+    println!("Read into a square: {:?}", square);
 
     for row in square.iter()
     {
@@ -18,11 +23,45 @@ pub fn encrypt(input: &str) -> String
 
     let cipher = square.join(""); //.into_iter().collect();
 
-    println!("cipher: {}", cipher);
+    println!("before cipher: [{}]", cipher);
+    println!("before length: {}", cipher.len());
 
+    let cipher= transponse(c, square);
+
+    println!("after cipher: [{}]", cipher);
+    println!("after length: {}", cipher.len());
     cipher
 
     //unimplemented!("Encrypt {:?} using a square code", input)
+}
+
+fn transponse(c:usize, v: Vec<String>) -> String
+{
+    let mut s = "".to_string(); //String::from_str("");
+    //let col = c - 1;
+
+    for i in 0..c
+    {
+        for row in v.iter()
+        {
+            let ch = row.chars().nth(i).unwrap();
+            s.push(ch);
+
+            print!("{}", row.chars().nth(i).unwrap());
+        }
+
+        //if i != c - 1
+        if i < c - 1
+        {
+            s.push(' ');
+        }
+
+
+
+        println!();
+    }
+
+    s
 }
 
 fn build_square(c: usize, r: usize, s: String) -> Vec<String>
@@ -31,27 +70,29 @@ fn build_square(c: usize, r: usize, s: String) -> Vec<String>
 
     let mut square:Vec<String> = Vec::new();
 
-    for _i in 1..c
+    for i in 0..r //r-1 //c
     {
         let mut col_length = c;
         let mut spaces = "".to_string();
 
-        if remainder.len() < r
+        if remainder.len() != 0
         {
-            spaces = " ".repeat(col_length - remainder.len());
-            col_length = remainder.len();
+            if remainder.len() < r && i == r - 1
+            {
+                spaces = " ".repeat(col_length - remainder.len());
+                col_length = remainder.len();
+            }
+
+            let mut row = remainder[0..col_length].to_string();
+            let rem = remainder[col_length..remainder.len()].to_string();
+
+            remainder = rem;
+            row = [row, spaces].join("");
+
+            square.push(row);
         }
-
-        let mut row= remainder[0..col_length].to_string();
-        let rem= remainder[col_length..remainder.len()].to_string();
-
-        remainder = rem;
-        row = [row, spaces].join("");
-
-        square.push(row);
     }
 
-    // need to pad the last string if length < r
     square
 }
 
@@ -69,6 +110,7 @@ pub fn get_dimen(s: &str) -> (usize, usize)
     println!("len: {}, c: {}, r: {}", len, c, r);
 
     (c, r)
+    //(r, c)
 }
 
 pub fn fmt_str(input: String) -> String
@@ -80,37 +122,4 @@ pub fn fmt_str(input: String) -> String
     println!("s after formatting: [{}]", s);
 
     s
-
-    //.replace(".", "").replace(" ", "").as_str()
-
-//    //[a-z]+
-//    // Create patterns used to parse command
-//    let p = r"[a-z]";
-//
-////    // Validate the command string
-////    let re = Regex::new(p).unwrap();
-////    if !re.is_match(s)
-////    {
-////        return Err(format!("The word problem command is invalid: {}", &self.command))
-////    }
-//
-////    let re= match Regex::new(p)
-////    {
-////        Ok(r) => r,
-////        Err(e) => { panic!("Could not compile regex: {}", e); }
-////    };
-////
-////    let caps = re.captures(s).unwrap();
-////    let s = caps.get(1).unwrap().as_str();
-//
-//    let re = Regex::new(r"[A-Za-z]").unwrap();
-//    let s1 = re.replace(" ", "");
-//    println!("s1: {}", s1); // => "xxxxx xxxxx!"
-//
-////    let mut re = Regex::new(r"[A-Za-z]");
-////    let r = re.unwrap(); //.replace_all("Hello World!", "x");
-////    let s1 = &r.to_string();
-//
-//    println!("{}", s1); // => "xxxxx xxxxx!"
-
 }
