@@ -16,7 +16,13 @@ pub fn encrypt(input: &str) -> String
         println!("{}", row);
     }
 
-    unimplemented!("Encrypt {:?} using a square code", input)
+    let cipher = square.join(""); //.into_iter().collect();
+
+    println!("cipher: {}", cipher);
+
+    cipher
+
+    //unimplemented!("Encrypt {:?} using a square code", input)
 }
 
 fn build_square(c: usize, r: usize, s: String) -> Vec<String>
@@ -28,23 +34,22 @@ fn build_square(c: usize, r: usize, s: String) -> Vec<String>
     for _i in 1..c
     {
         let mut col_length = c;
+        let mut spaces = "".to_string();
 
         if remainder.len() < r
         {
+            spaces = " ".repeat(col_length - remainder.len());
             col_length = remainder.len();
         }
 
         let mut row= remainder[0..col_length].to_string();
         let rem= remainder[col_length..remainder.len()].to_string();
 
-        let spaces = " ".repeat(2);
+        remainder = rem;
         row = [row, spaces].join("");
 
         square.push(row);
-
-        remainder = rem;
     }
-
 
     // need to pad the last string if length < r
     square
