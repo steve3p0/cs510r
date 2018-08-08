@@ -7,7 +7,7 @@ pub fn encrypt(input: &str) -> String
     let s = fmt_str(input.to_string());
     let (c, r) = get_dimen(&s);
 
-    let square = build_square(c, r, &s);
+    let square = build_square(c, r, s);
 
     println!("{:?}", square);
 
@@ -19,33 +19,34 @@ pub fn encrypt(input: &str) -> String
     unimplemented!("Encrypt {:?} using a square code", input)
 }
 
-fn build_square(c: usize, r: usize, s: &str) -> Vec<&str>
+fn build_square(c: usize, r: usize, s: String) -> Vec<String>
 {
-    let mut remainder = s.clone();
+    let mut remainder = s;
 
-    let mut square:Vec<&str> = Vec::new();
+    let mut square:Vec<String> = Vec::new();
 
     for _i in 1..c
     {
         let mut col_length = c;
-        // let mut row = "";
 
-        let mut padding = "".to_string();
         if remainder.len() < r
         {
             col_length = remainder.len();
         }
 
-        let (mut row, mut rem) = remainder.split_at(col_length);
+        let row= remainder[0..col_length].to_string();
+        let rem= remainder[col_length..remainder.len()].to_string();
+
+        let spaces = " ".repeat(2);
+        let row = [row, spaces].join("");
 
         square.push(row);
 
-        //s = remainder;
         remainder = rem;
     }
 
 
-    // pad the las
+    // need to pad the last string if length < r
     square
 }
 
