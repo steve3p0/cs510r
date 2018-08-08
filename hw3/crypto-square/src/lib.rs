@@ -34,11 +34,11 @@ fn build_square(c: usize, r: usize, s: String) -> Vec<String>
             col_length = remainder.len();
         }
 
-        let row= remainder[0..col_length].to_string();
+        let mut row= remainder[0..col_length].to_string();
         let rem= remainder[col_length..remainder.len()].to_string();
 
         let spaces = " ".repeat(2);
-        let row = [row, spaces].join("");
+        row = [row, spaces].join("");
 
         square.push(row);
 
