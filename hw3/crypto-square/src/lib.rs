@@ -8,32 +8,15 @@ pub fn encrypt(input: &str) -> String
 
     let s = fmt_str(input.to_string());
     let (c, r) = get_dimen(&s);
-
     let square = build_square(c, r, s);
-
-    println!("Read into a square: {:?}", square);
-
-    for row in square.iter()
-    {
-        println!("{}", row);
-    }
-
-    let cipher = square.join("");
-
-    println!("before cipher: [{}]", cipher);
-    println!("before length: {}", cipher.len());
-
     let cipher= transponse(c, square);
 
-    println!("after cipher: [{}]", cipher);
-    println!("after length: {}", cipher.len());
     cipher
 }
 
 fn transponse(c:usize, v: Vec<String>) -> String
 {
     let mut s = "".to_string();
-    //let col = c - 1;
 
     for i in 0..c
     {
@@ -41,16 +24,12 @@ fn transponse(c:usize, v: Vec<String>) -> String
         {
             let ch = row.chars().nth(i).unwrap();
             s.push(ch);
-
-            print!("{}", row.chars().nth(i).unwrap());
         }
 
         if i < c - 1
         {
             s.push(' ');
         }
-
-        println!();
     }
 
     s
@@ -99,8 +78,6 @@ pub fn get_dimen(s: &str) -> (usize, usize)
         r -= 1;
     }
 
-    println!("len: {}, c: {}, r: {}", len, c, r);
-
     (c, r)
 }
 
@@ -108,8 +85,5 @@ pub fn fmt_str(input: String) -> String
 {
     let s = input.to_lowercase().replace(",", "").replace(".", "").replace("-", "")
         .replace(" ", "").replace('\n', "");
-
-    println!("s after formatting: [{}]", s);
-
     s
 }
