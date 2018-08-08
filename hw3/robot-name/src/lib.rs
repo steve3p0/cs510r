@@ -1,4 +1,3 @@
-extern crate time;
 extern crate rand;
 
 use rand::Rng;
@@ -37,44 +36,29 @@ impl Robot
 
     pub fn random() -> String
     {
-        // 26 X 26 = 676
-        // 10 x 10 x 10 = 1000
-        // 647 x 1000 = 676,000
+        let rnd_prefix = rand::thread_rng().gen_range(0, 675);
+        let prefix = Robot::base26_alpha(rnd_prefix);
+        //println!("rnd_prefix({}, {}): {}", 0, 675, rnd_prefix);
 
-        let mut rnd:u32 = time::get_time().nsec as u32;
+        let rnd_suffix = rand::thread_rng().gen_range(0, 999);
+        //let rnd_suffix = 73;
 
-        let min = 0;
-        let max = 676000 - 1;
+        let mut suffix = rnd_suffix.to_string();
+        //println!("rnd_suffix({}, {}): {}", 0, 999, rnd_suffix);
 
-        let num = rand::thread_rng().gen_range(min, max) as u32;
-        println!("rand::thread_rng.gen_range({}, {}): {}", min, max, num);
+        let rep = 3 - suffix.len();
+        let padding = "0".repeat(rep);
+        //println!("padding: [{}]", padding);
+        suffix = format!("{}{}", padding, suffix);
 
-
-        rnd += 1;
-        let mut rnd_string = Robot::right(rnd.to_string(), 6);
-        //println!("Nanoseconds as string: {}", rnd_string);
-
-        let mut prefix_i32 = Robot::left(rnd_string.clone(), 3).parse::<i32>().unwrap();
-        //println!("prefix_i32: {}", prefix_i32);
-
-        if prefix_i32 > 675
-        {
-            prefix_i32 -= 400;
-
-            rnd_string = Robot::left(rnd_string,3);
-            rnd_string.push('0');
-        }
-
-        let suffix = Robot::right(rnd_string, 3);
-        let prefix_string = Robot::base26_alpha(prefix_i32);
-        let random = format!("{}{}", prefix_string, suffix);
+        let random = format!("{}{}", prefix, suffix);
+        //println!("RANDOM: {}", random);
 
         random
     }
 
     pub fn base26_alpha(mut n: i32) -> String
     {
-        //let mut n = num; // 123;
         let mut chars: Vec<char> = Vec::new();
 
         loop
@@ -82,7 +66,7 @@ impl Robot
             let (a, b) = Robot::divmod(n);
             n = a;
 
-            let c = Robot::itoa(b); // b + 65) as u8 as char;
+            let c = (b + 65) as u8 as char;
 
             chars.push(c);
 
@@ -112,52 +96,6 @@ impl Robot
         }
 
         (a, b)
-    }
-
-    pub fn itoa(n: i32) -> char
-    {
-        let c = (n + 65) as u8 as char;
-
-        c
-    }
-
-    pub fn left(s: String, n: usize) -> String
-    {
-        let len = s.len();
-        let mut s_right = s;
-
-        if len < n
-        {
-            let mut dif = n - len;
-            while dif > 0
-            {
-                s_right.push('0');
-
-                dif += 1;
-            }
-        }
-
-        s_right.chars().take(n).collect::<String>()
-    }
-
-    pub fn right(s: String, n: usize) -> String
-    {
-        let len = s.len();
-        let mut s_right = s;
-
-        if len < n
-        {
-            let mut dif = n - len;
-            while dif > 0
-            {
-                s_right.push('0');
-
-                dif += 1;
-            }
-        }
-
-        let start = len - n;
-        s_right.chars().skip(start).take(len).collect::<String>()
     }
 }
 
