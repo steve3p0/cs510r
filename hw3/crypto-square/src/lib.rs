@@ -1,6 +1,3 @@
-extern crate regex;
-
-//use regex::Regex;
 
 pub fn encrypt(input: &str) -> String
 {
@@ -21,7 +18,7 @@ pub fn encrypt(input: &str) -> String
         println!("{}", row);
     }
 
-    let cipher = square.join(""); //.into_iter().collect();
+    let cipher = square.join("");
 
     println!("before cipher: [{}]", cipher);
     println!("before length: {}", cipher.len());
@@ -31,13 +28,11 @@ pub fn encrypt(input: &str) -> String
     println!("after cipher: [{}]", cipher);
     println!("after length: {}", cipher.len());
     cipher
-
-    //unimplemented!("Encrypt {:?} using a square code", input)
 }
 
 fn transponse(c:usize, v: Vec<String>) -> String
 {
-    let mut s = "".to_string(); //String::from_str("");
+    let mut s = "".to_string();
     //let col = c - 1;
 
     for i in 0..c
@@ -67,7 +62,7 @@ fn build_square(c: usize, r: usize, s: String) -> Vec<String>
 
     let mut square:Vec<String> = Vec::new();
 
-    for i in 0..r //r-1 //c
+    for i in 0..r
     {
         let mut col_length = c;
         let mut spaces = "".to_string();
