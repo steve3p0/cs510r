@@ -50,13 +50,10 @@ fn transponse(c:usize, v: Vec<String>) -> String
             print!("{}", row.chars().nth(i).unwrap());
         }
 
-        //if i != c - 1
         if i < c - 1
         {
             s.push(' ');
         }
-
-
 
         println!();
     }
@@ -110,14 +107,12 @@ pub fn get_dimen(s: &str) -> (usize, usize)
     println!("len: {}, c: {}, r: {}", len, c, r);
 
     (c, r)
-    //(r, c)
 }
 
 pub fn fmt_str(input: String) -> String
 {
-
-    // let mut s = input.to_lowercase().replace(",", "").replace(".", "").replace(" ", "");
-    let s = input.to_lowercase().replace(",", "").replace(".", "").replace(" ", "");
+    let s = input.to_lowercase().replace(",", "").replace(".", "").replace("-", "")
+        .replace(" ", "").replace('\n', "");
 
     println!("s after formatting: [{}]", s);
 
