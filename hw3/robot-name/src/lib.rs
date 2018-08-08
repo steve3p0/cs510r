@@ -37,43 +37,35 @@ impl Robot
 
     pub fn random() -> String
     {
-        // n[0..2].chars().all(|c| c >= 'A' && c <= 'Z'),
-        //n[2..].chars().all(|c| c >= '0' && c <= '9')
-
         // 26 X 26 = 676
         // 10 x 10 x 10 = 1000
         // 647 x 1000 = 676,000
 
-        //let mut nano_u32:u32 = time::get_time().nsec as u32;
-        let mut nano_u32:u32 = time::get_time().nsec as u32;
+        let mut rnd:u32 = time::get_time().nsec as u32;
 
         let min = 0;
         let max = 676000 - 1;
 
-        //let num = rand::thread_rng().gen_range(min, max);
         let num = rand::thread_rng().gen_range(min, max) as u32;
         println!("rand::thread_rng.gen_range({}, {}): {}", min, max, num);
 
 
-        println!("\nNanoseconds: {}", nano_u32);
+        rnd += 1;
+        let mut rnd_string = Robot::right(rnd.to_string(), 6);
+        //println!("Nanoseconds as string: {}", rnd_string);
 
-
-        nano_u32 += 1;
-        let mut nano_string = Robot::right(nano_u32.to_string(), 6);
-        //println!("Nanoseconds as string: {}", nano_string);
-
-        let mut prefix_i32 = Robot::left(nano_string.clone(), 3).parse::<i32>().unwrap();
+        let mut prefix_i32 = Robot::left(rnd_string.clone(), 3).parse::<i32>().unwrap();
         //println!("prefix_i32: {}", prefix_i32);
 
         if prefix_i32 > 675
         {
             prefix_i32 -= 400;
 
-            nano_string = Robot::left(nano_string,3);
-            nano_string.push('0');
+            rnd_string = Robot::left(rnd_string,3);
+            rnd_string.push('0');
         }
 
-        let suffix = Robot::right(nano_string, 3);
+        let suffix = Robot::right(rnd_string, 3);
         let prefix_string = Robot::base26_alpha(prefix_i32);
         let random = format!("{}{}", prefix_string, suffix);
 
