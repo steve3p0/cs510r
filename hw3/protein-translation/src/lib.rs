@@ -29,8 +29,6 @@ impl <'a>Proteins<'a>
 
     pub fn of_rna(&self, rna_sequence: &'a str) -> Result<Vec<&str>, &str>
     {
-        //info.of_rna("AUGUUUUGG") -> Ok(vec!["methionine", "phenylalanine", "tryptophan"])
-
         if rna_sequence.len() % 3 != 0
         {
             return Err("Invalid RNA sequence");
@@ -62,13 +60,6 @@ impl <'a>Proteins<'a>
             }
         }
 
-        if proteins.len() > 0
-        {
-            Ok(proteins)
-        }
-        else
-        {
-            Err("Dude, something's wrong")
-        }
+        Ok(proteins)
     }
 }
