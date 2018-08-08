@@ -38,21 +38,15 @@ impl Robot
     {
         let rnd_prefix = rand::thread_rng().gen_range(0, 675);
         let prefix = Robot::base26_alpha(rnd_prefix);
-        //println!("rnd_prefix({}, {}): {}", 0, 675, rnd_prefix);
-
         let rnd_suffix = rand::thread_rng().gen_range(0, 999);
-        //let rnd_suffix = 73;
-
         let mut suffix = rnd_suffix.to_string();
-        //println!("rnd_suffix({}, {}): {}", 0, 999, rnd_suffix);
 
         let rep = 3 - suffix.len();
         let padding = "0".repeat(rep);
-        //println!("padding: [{}]", padding);
         suffix = format!("{}{}", padding, suffix);
 
         let random = format!("{}{}", prefix, suffix);
-        //println!("RANDOM: {}", random);
+        //println!("random: {}", random);
 
         random
     }
