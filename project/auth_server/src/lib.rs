@@ -40,7 +40,7 @@ pub fn create_post(conn: &SqliteConnection, title: &str, body: &str) -> usize
         .expect("Error saving new post")
 }
 
-pub fn fn_view_post() -> String
+pub fn get_user_creds() -> String
 {
     //use auth_server::schema::posts::dsl::*;
     use schema::posts::dsl::*;

@@ -83,42 +83,14 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
                 let req_body = String::from_utf8(vec).unwrap();
                 println!("req_body = {}", req_body);
 
+                let res = get_user_creds();
 
-
-                //////////////////////////////////////////////
-                // DIESEL: DISPLAY POSTS
-//                use auth_server::schema::posts::dsl::*;
-//
-//                let connection = establish_connection();
-//                let results = posts
-//                    .filter(published.eq(true))
-//                    .limit(5)
-//                    .load::<Post>(&connection)
-//                    .expect("Error loading posts");
-//
-//                println!("Displaying {} posts", results.len());
-//                let mut res: String = "".to_string();
-//                for post in results
-//                {
-//                    res.push_str(&post.title);
-//                    println!("{}", post.title);
-//                    println!("----------\n");
-//                    println!("{}", post.body);
-//                }
-//
-//                println!("posts: res: {}", res);
-                //////////////////////////////////////////////
-
-                let res = fn_view_post();
-
-
+                //let response_body = r#"{"UserID":53,"User_Authentication_Key":"f84089af-2dc4-4119-b671-e8e297b4dd34","User_Access_Expiration_Date":null,"Hours_Used":null,"Hours_Available":null,"Speech_URL":"wss://services.govivace.com:49153","Translation_URL":"mt.lovoco.co","Success":true,"Message":""}"#;
                 //let response_body = r#"{"User_Authentication_Key":"","Speech_URL":"","Translation_URL":"","Success":true,"Message":""}"#;
                 //let response_body = format!(r#"{"User_Authentication_Key": "{}", "Speech_URL": "{}", "Success":{}, "Message":"{}"}"#, var1, var2, var3, var4);
                 //let response_body = format!(r#"{"User_Authentication_Key": "{}", "Speech_URL": "{}", "Success":{}, "Message":"{}"}"#, res, res, res, res);
-                let response_body = format!(r#"{{"User_Authentication_Key": "{}"}}"#, res);
-
-
-                //let response_body = r#"{"UserID":53,"User_Authentication_Key":"f84089af-2dc4-4119-b671-e8e297b4dd34","User_Access_Expiration_Date":null,"Hours_Used":null,"Hours_Available":null,"Speech_URL":"wss://services.govivace.com:49153","Translation_URL":"mt.lovoco.co","Success":true,"Message":""}"#;
+                //let response_body = format!(r#"{{"User_Authentication_Key": "{}"}}"#, res);
+                let response_body = format!(r#"{{"User_Authentication_Key": "{}", "Speech_URL": "{}", "Success":{}, "Message":"{}"}}"#, res, res, res, res);
 
                 Chunk::from(response_body.to_string())
 
