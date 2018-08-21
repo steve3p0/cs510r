@@ -3,29 +3,18 @@ extern crate auth_server;
 extern crate futures;
 extern crate hyper;
 extern crate hyper_tls;
-
 extern crate unicase;
-
-
-//use hyper::header::{Headers, AccessControlAllowOrigin, AccessControlAllowHeaders};
-//use hyper::server::{Http, Request, Response, Service};
 
 use futures::future::*;
 use unicase::Ascii;
 use std::str;
 
-
 use self::auth_server::*;
-
 use futures::{future, Future, Stream};
 use hyper::{Body, Chunk, Client, Method, Request, Response, Server, StatusCode, header};
 use hyper::client::HttpConnector;
 use hyper::service::service_fn;
-
 use hyper_tls::HttpsConnector;
-
-//use hyper::Client;
-
 
 #[test]
 fn test_get_credentials()
@@ -51,7 +40,9 @@ fn test_serialize_request()
     assert!(password == "password");
 }
 
-
+// Could not for the life of me figure out how to create a Hyper::Request<Body>
+// for testing purposes.  I basically need to mock a request body to test
+// This was badly needed to isolate errors.  Oh well.
 //#[test]
 //fn test_toupper()
 //{

@@ -11,6 +11,7 @@ pub struct AppUser
     pub SpeechURL: String,
 }
 
+// For later when this API inserts users
 //#[derive(Insertable)]
 //#[table_name = "app_users"]
 //pub struct NewAppUser<'a>

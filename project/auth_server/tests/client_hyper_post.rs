@@ -5,18 +5,15 @@ extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
 
-use serde_json::Error;
-
 use std::io::{self, Write};
-
 use hyper::Client;
 use hyper::rt::{self, Future, Stream};
 use hyper::{Method, Request};
-//use hyper::header::{Connection, Headers, UserAgent};
-
 use hyper_tls::HttpsConnector;
+use serde_json::Error;
 
-
+// Sorry about not using snake case names
+// I tried using some serde directives but they didn't work
 #[derive(Serialize, Deserialize)]
 #[derive(PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -29,8 +26,16 @@ struct Body
     Message: String
 }
 
+// NOTE: YOU MUST CHECK THE OUTPUT
+// These tests unfortunately will always pass!
+/////////////////////////////////////////////////
+// Because the asserts are imbedded in a 'futures' call
+// the test won't panic when if the assert fails
+// I tried to have the future call return back data
+// so I could assert the values outside (after) the
+// futures call but couldn't figure that out
 #[test]
-fn test_hyper_client_post_http()
+fn test_auth_api_positive()
 {
     let expected_response_body = Body
         {
@@ -46,6 +51,25 @@ fn test_hyper_client_post_http()
     let url = "http://127.0.0.1:1337/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
     rt::run(fetch_url(url, json,expected_response_body));
 }
+
+#[test]
+fn test_auth_api_invalid_password()
+{
+    let expected_response_body = Body
+        {
+            User_Authentication_Key: Some("authkey123".to_string()),
+            Speech_URL: Some("wss://asr.acme.com:12345".to_string()),
+            Translation_URL: Some("mt1.lovoco.co".to_string()),
+            Success: true,
+            Message: "".to_string()
+        };
+
+    let json= r#"{"username": "joeblow","password":"XXXX"}"#;
+
+    let url = "http://127.0.0.1:1337/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
+    rt::run(fetch_url(url, json,expected_response_body));
+}
+
 
 
 #[test]
