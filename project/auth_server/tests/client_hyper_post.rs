@@ -41,12 +41,10 @@ fn test_hyper_client_post_http()
             Message: "".to_string()
         };
 
-    let json= r#"{"UserName": "steve@lovoco.co","Password":"123"}"#;
+    //let json= r#"{"UserName": "steve@lovoco.co","Password":"123"}"#;
+    let json= r#"{"UserName": "joeblow","Password":"password"}"#;
 
-    //let url = "http://127.0.0.1:8080/user/steve".parse().unwrap();
-    //let url = "http://127.0.0.1:1337/web_api".parse().unwrap();
     let url = "http://127.0.0.1:1337/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
-    //let url = "http://127.0.0.1:1337/WinAppAuthAPI".parse().unwrap();
     rt::run(fetch_url(url, json,b));
 }
 
@@ -70,6 +68,25 @@ fn test_hyper_client_post_ssl()
 }
 
 #[test]
+fn test_hyper_client_post_ssl_wrongpasswrd()
+{
+    let b = Body
+        {
+            User_Authentication_Key: Some("f84089af-2dc4-4119-b671-e8e297b4dd34".to_string()),
+            Speech_URL: Some("wss://services.govivace.com:49153".to_string()),
+            Translation_URL: Some("mt.lovoco.co".to_string()),
+            Success: true,
+            Message: "".to_string()
+        };
+
+    let json= r#"{"UserName": "steve@lovoco.co","Password":"XXX"}"#;
+
+    let url = "https://stenopoly.lovoco.co/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
+    rt::run(fetch_url(url, json,b));
+}
+
+
+#[test]
 fn test_hyper_client_post_ssl_fail()
 {
     let b = Body
@@ -91,9 +108,6 @@ fn test_hyper_client_post_ssl_fail()
 fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> impl Future<Item=(), Error=()>
 //fn fetch_url(url: hyper::Uri) -> impl Future<Item=(), Error=()>
 {
-    let client = Client::new();
-
-
     //let mut req = Request::new(Body::from(json));
     let mut req = Request::new(hyper::body::Body::from(json));
     //hyper::body
@@ -110,6 +124,9 @@ fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> im
     let client = Client::builder()
         .build::<_, hyper::Body>(https);
 
+    println!("Before client request execution: 1 ");
+    //println!("req: {}", req);
+
     client
         // Fetch the url...
         //.get(url)
@@ -124,6 +141,7 @@ fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> im
             // each chunk of the body...
             res.into_body().for_each(move |chunk|
             {
+                println!("Before client request execution: 2 ");
 
                 let vec = chunk.to_vec();
                 let response_json = String::from_utf8(vec).unwrap();

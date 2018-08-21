@@ -1,22 +1,28 @@
 #[macro_use]
 extern crate diesel;
-
 extern crate dotenv;
+
+
+extern crate serde_json;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+
 
 pub mod models;
 pub mod schema;
+//mod schema { infer_schema!("dotenv:DATABASE_URL"); }
 
 use diesel::prelude::*;
 use dotenv::dotenv;
 use std::env;
-
-//use self::diesel::prelude::*;
 use models::*;
-//use auth_server::*;
 
-use models::NewPost;
+use serde_json::Error;
+//use models::NewPost;
 
-pub fn establish_connection() -> SqliteConnection {
+pub fn establish_connection() -> SqliteConnection
+{
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
@@ -24,45 +30,57 @@ pub fn establish_connection() -> SqliteConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
-pub fn create_post(conn: &SqliteConnection, title: &str, body: &str) -> usize
-{
-    use schema::posts;
 
-    let new_post = NewPost
-    {
-        title: title,
-        body: body,
-    };
-
-    diesel::insert_into(posts::table)
-        .values(&new_post)
-        .execute(conn)
-        .expect("Error saving new post")
-}
-
-pub fn get_user_creds() -> String
+pub fn get_credentials(username: &str, password: &str) -> String
 {
     //use auth_server::schema::posts::dsl::*;
-    use schema::posts::dsl::*;
+    use schema::app_users::dsl::*;
 
     let connection = establish_connection();
-    let results = posts
-        .filter(published.eq(true))
-        .limit(5)
-        .load::<Post>(&connection)
-        .expect("Error loading posts");
 
-    println!("Displaying {} posts", results.len());
-    let mut res: String = "".to_string();
-    for post in results
-        {
-            res.push_str(&post.title);
-            println!("{}", post.title);
-            println!("----------\n");
-            println!("{}", post.body);
-        }
+    let user: models::AppUser = app_users
+        .filter(Username.eq(username))
+        .first(&connection)
+        .unwrap_or_else(|_| panic!("Unable to find user {}", username));
 
-    println!("posts: res: {}", res);
+//    let json = AppUser
+//    {
+//        UserAuthenticationKey: user.UserAuthenticationKey,
+//        TranslationURL: user.TranslationURL,
+//        SpeechURL: user.SpeechURL,
+//    };
 
-    res
+    let json_creds = format!(r#"{{"User_Authentication_Key": "{}", "Speech_URL": "{}", "Success":{}, "Message":""}}"#,
+                                &user.UserAuthenticationKey,
+                                &user.TranslationURL,
+                                &user.SpeechURL);
+
+
+    json_creds
+}
+
+pub fn serialize_request(json: &str) -> Result<AppUserRequest, Error>
+{
+    // Some JSON input data as a &str. Maybe this comes from the user.
+
+    // Parse the string of data into a Person object. This is exactly the
+    // same function as the one that produced serde_json::Value above, but
+    // now we are asking it for a Person as output.
+    let app_user_req: AppUserRequest = serde_json::from_str(json)?;
+
+    // Do things just like with any other Rust data structure.
+//    println!("res_body.User_Authentication_Key: {}", b.User_Authentication_Key);
+//    println!("res_body.Speech_URL: {}", b.Speech_URL);
+//    println!("res_body.Translation_URL: {}", b.Translation_URL);
+
+    Ok(app_user_req)
+}
+
+#[derive(Serialize, Deserialize)]
+#[derive(PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub struct AppUserRequest
+{
+    pub username: Option<String>,
+    pub password: Option<String>,
 }

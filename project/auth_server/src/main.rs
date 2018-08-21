@@ -3,20 +3,13 @@ extern crate futures;
 extern crate hyper;
 extern crate pretty_env_logger;
 extern crate serde_json;
-
-///////////////////////////////////////////
-// diesel
 extern crate diesel;
+
 extern crate auth_server;
 
-// diesel
-//use self::diesel::prelude::*;
-//use self::auth_server::models::*;
 use self::auth_server::*;
-///////////////////////////////////////////
 
 use futures::{future, Future, Stream};
-
 use hyper::{Body, Chunk, Client, Method, Request, Response, Server, StatusCode, header};
 use hyper::client::HttpConnector;
 use hyper::service::service_fn;
@@ -32,8 +25,10 @@ static LOWERCASE: &[u8] = b"i am a lower case string";
 fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
                      -> Box<Future<Item=Response<Body>, Error=hyper::Error> + Send>
 {
-    match (req.method(), req.uri().path()) {
-        (&Method::GET, "/") | (&Method::GET, "/index.html") => {
+    match (req.method(), req.uri().path())
+    {
+        (&Method::GET, "/") | (&Method::GET, "/index.html") =>
+        {
             let body = Body::from(INDEX);
             Box::new(future::ok(Response::new(body)))
         },
@@ -61,7 +56,8 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
                 Response::new(body)
             }))
         },
-        (&Method::POST, "/web_api") => {
+        (&Method::POST, "/web_api") =>
+        {
             // A web api to run against. Uppercases the body and returns it back.
             let body = Body::wrap_stream(req.into_body().map(|chunk| {
                 // uppercase the letters
@@ -72,8 +68,7 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
             Box::new(future::ok(Response::new(body)))
         },
 
-        (&Method::POST, "/api/LoginAPI/WinAppAuthAPI") =>
-        //(&Method::POST, "/WinAppAuthAPI") =>
+        (&Method::POST, "/api/LoginAPI/WinAppAuthAPI1") =>
         {
             // A web api to run against. Uppercases the body and returns it back.
             let body = Body::wrap_stream(req.into_body().map(|chunk|
@@ -83,27 +78,71 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
                 let req_body = String::from_utf8(vec).unwrap();
                 println!("req_body = {}", req_body);
 
-                let res = get_user_creds();
+                //let req_app_user: AppUserRequest = serialize_request(&response_json).unwrap();
+                let req_app_user: AppUserRequest = serialize_request(&req_body).unwrap();
 
-                //let response_body = r#"{"UserID":53,"User_Authentication_Key":"f84089af-2dc4-4119-b671-e8e297b4dd34","User_Access_Expiration_Date":null,"Hours_Used":null,"Hours_Available":null,"Speech_URL":"wss://services.govivace.com:49153","Translation_URL":"mt.lovoco.co","Success":true,"Message":""}"#;
-                //let response_body = r#"{"User_Authentication_Key":"","Speech_URL":"","Translation_URL":"","Success":true,"Message":""}"#;
-                //let response_body = format!(r#"{"User_Authentication_Key": "{}", "Speech_URL": "{}", "Success":{}, "Message":"{}"}"#, var1, var2, var3, var4);
-                //let response_body = format!(r#"{"User_Authentication_Key": "{}", "Speech_URL": "{}", "Success":{}, "Message":"{}"}"#, res, res, res, res);
-                //let response_body = format!(r#"{{"User_Authentication_Key": "{}"}}"#, res);
-                let response_body = format!(r#"{{"User_Authentication_Key": "{}", "Speech_URL": "{}", "Success":{}, "Message":"{}"}}"#, res, res, res, res);
+                let username = &req_app_user.username.unwrap();
+                let password = &req_app_user.password.unwrap();
 
-                Chunk::from(response_body.to_string())
+                let res = get_credentials(username, password);
 
-                // uppercase the letters
-                //// Original
-                //let upper = chunk.iter().map(|byte| byte.to_ascii_uppercase()).collect::<Vec<u8>>();
-                //Chunk::from(upper)
+                Chunk::from(res)
+            }));
+
+            Box::new(future::ok(Response::new(body)))
+        },
+        /////////////////////////////
+
+        (&Method::POST, "/api/LoginAPI/WinAppAuthAPIxxxx") =>
+        {
+            // A web api to run against. Uppercases the body and returns it back.
+            let body = Body::wrap_stream(req.into_body().map(|chunk|
+            {
+                // Get the request body
+                let vec = chunk.to_vec();
+                let req_body = String::from_utf8(vec).unwrap();
+                println!("req_body = {}", req_body);
+
+                //let req_app_user: AppUserRequest = serialize_request(&response_json).unwrap();
+                let req_app_user: AppUserRequest = serialize_request(&req_body).unwrap();
+
+                let username = &req_app_user.username.unwrap();
+                //let password = &req_app_user.password.unwrap();
+
+                println!("username: {}", username);
+                Chunk::from(username.to_string())
 
             }));
+
             Box::new(future::ok(Response::new(body)))
         },
 
-        (&Method::GET, "/json") => {
+        (&Method::POST, "/api/LoginAPI/WinAppAuthAPI") =>
+        {
+            // A web api to run against. Uppercases the body and returns it back.
+            let body = to_upper(req);
+
+            Box::new(future::ok(Response::new(body)))
+        },
+
+        (&Method::POST, "/to_upper2") =>
+        {
+            // A web api to run against. Uppercases the body and returns it back.
+            let body = Body::wrap_stream(req.into_body().map(|chunk|
+            {
+                // uppercase the letters
+                // Original
+                let upper = chunk.iter().map(|byte| byte.to_ascii_uppercase()).collect::<Vec<u8>>();
+                Chunk::from(upper)
+
+            }));
+
+            Box::new(future::ok(Response::new(body)))
+        },
+
+
+        (&Method::GET, "/json") =>
+        {
             let data = vec!["foo", "bar"];
             let res = match serde_json::to_string(&data) {
                 Ok(json) => {
@@ -128,7 +167,9 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
 
             Box::new(future::ok(res))
         }
-        _ => {
+
+        _ =>
+        {
             // Return 404 not found response.
             let body = Body::from(NOTFOUND);
             Box::new(future::ok(Response::builder()
@@ -137,6 +178,20 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
                 .unwrap()))
         }
     }
+}
+
+fn to_upper(req: Request<Body>) -> Body
+{
+    // A web api to run against. Uppercases the body and returns it back.
+    let body = Body::wrap_stream(req.into_body().map(|chunk|
+    {
+        // uppercase the letters
+        // Original
+        let upper = chunk.iter().map(|byte| byte.to_ascii_uppercase()).collect::<Vec<u8>>();
+        Chunk::from(upper)
+    }));
+
+    body
 }
 
 fn main()
