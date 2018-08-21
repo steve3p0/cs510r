@@ -70,7 +70,7 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
             Box::new(future::ok(Response::new(body)))
         },
 
-        (&Method::POST, "/api/LoginAPI/WinAppAuthAPI1") =>
+        (&Method::POST, "/api/LoginAPI/WinAppAuthAPI") =>
         {
             // A web api to run against. Uppercases the body and returns it back.
             let body = Body::wrap_stream(req.into_body().map(|chunk|
@@ -78,13 +78,20 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
                 // Get the request body
                 let vec = chunk.to_vec();
                 let req_body = String::from_utf8(vec).unwrap();
+                //let req_body = String::from_
                 println!("req_body = {}", req_body);
 
-                //let req_app_user: AppUserRequest = serialize_request(&response_json).unwrap();
+                //let req_body = r#"{"username": "joeblow", "password": "password" }"#;
+
+                println!("Right before serialize_requirest");
                 let req_app_user: AppUserRequest = serialize_request(&req_body).unwrap();
+                println!("Right after serialize_requirest");
+
 
                 let username = &req_app_user.username.unwrap();
                 let password = &req_app_user.password.unwrap();
+                println!("username: {}", &username);
+                println!("password: {}", &password);
 
                 let res = get_credentials(username, password);
 
@@ -95,15 +102,17 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
         },
         /////////////////////////////
 
-        (&Method::POST, "/api/LoginAPI/WinAppAuthAPIxxxx") =>
+        (&Method::POST, "/api/LoginAPI/WinAppAuthAPIxxx") =>
         {
             // A web api to run against. Uppercases the body and returns it back.
             let body = Body::wrap_stream(req.into_body().map(|chunk|
             {
                 // Get the request body
                 let vec = chunk.to_vec();
-                let req_body = String::from_utf8(vec).unwrap();
-                println!("req_body = {}", req_body);
+                let req_body= String::from_utf8(vec).unwrap();
+                //println!("req_body1 = {}", req_body1);
+
+                //let req_body = r#"{"username": "joeblow", "password": "password" }"#;
 
                 //let req_app_user: AppUserRequest = serialize_request(&response_json).unwrap();
                 let req_app_user: AppUserRequest = serialize_request(&req_body).unwrap();
@@ -113,13 +122,12 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
 
                 println!("username: {}", username);
                 Chunk::from(username.to_string())
-
             }));
 
             Box::new(future::ok(Response::new(body)))
         },
 
-        (&Method::POST, "/api/LoginAPI/WinAppAuthAPI") =>
+        (&Method::POST, "/api/LoginAPI/WinAppAuthAPIxxxx") =>
         {
             // A web api to run against. Uppercases the body and returns it back.
             let body = to_upper(req);

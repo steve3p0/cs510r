@@ -32,20 +32,19 @@ struct Body
 #[test]
 fn test_hyper_client_post_http()
 {
-    let b = Body
+    let expected_response_body = Body
         {
-            User_Authentication_Key: Some("f84089af-2dc4-4119-b671-e8e297b4dd34".to_string()),
-            Speech_URL: Some("wss://services.govivace.com:49153".to_string()),
-            Translation_URL: Some("mt.lovoco.co".to_string()),
+            User_Authentication_Key: Some("authkey123".to_string()),
+            Speech_URL: Some("wss://asr.acme.com:12345".to_string()),
+            Translation_URL: Some("mt1.lovoco.co".to_string()),
             Success: true,
             Message: "".to_string()
         };
 
-    //let json= r#"{"UserName": "steve@lovoco.co","Password":"123"}"#;
-    let json= r#"{"UserName": "joeblow","Password":"password"}"#;
+    let json= r#"{"username": "joeblow","password":"password"}"#;
 
     let url = "http://127.0.0.1:1337/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
-    rt::run(fetch_url(url, json,b));
+    rt::run(fetch_url(url, json,expected_response_body));
 }
 
 
@@ -71,13 +70,13 @@ fn test_hyper_client_post_ssl()
 fn test_hyper_client_post_ssl_wrongpasswrd()
 {
     let b = Body
-        {
-            User_Authentication_Key: Some("f84089af-2dc4-4119-b671-e8e297b4dd34".to_string()),
-            Speech_URL: Some("wss://services.govivace.com:49153".to_string()),
-            Translation_URL: Some("mt.lovoco.co".to_string()),
-            Success: true,
-            Message: "".to_string()
-        };
+    {
+        User_Authentication_Key: Some("f84089af-2dc4-4119-b671-e8e297b4dd34".to_string()),
+        Speech_URL: Some("wss://services.govivace.com:49153".to_string()),
+        Translation_URL: Some("mt.lovoco.co".to_string()),
+        Success: true,
+        Message: "".to_string()
+    };
 
     let json= r#"{"UserName": "steve@lovoco.co","Password":"XXX"}"#;
 

@@ -57,10 +57,12 @@ pub fn get_credentials(username: &str, password: &str) -> String
 //        SpeechURL: user.SpeechURL,
 //    };
 
-    let json_creds = format!(r#"{{"User_Authentication_Key": "{}", "Speech_URL": "{}", "Success":{}, "Message":""}}"#,
+    let json_creds = format!(r#"{{"User_Authentication_Key": "{}", "Speech_URL": "{}", "Translation_URL":{}, "Success":{}, "Message":""}}"#,
                                 &user.UserAuthenticationKey,
                                 &user.TranslationURL,
-                                &user.SpeechURL);
+                                &user.SpeechURL,
+                                true,
+    );
 
 
     json_creds
@@ -73,7 +75,13 @@ pub fn serialize_request(json: &str) -> Result<AppUserRequest, Error>
     // Parse the string of data into a Person object. This is exactly the
     // same function as the one that produced serde_json::Value above, but
     // now we are asking it for a Person as output.
+
+    println!("Inside serialize!!!");
+
+    println!("BEORE serde::from_str!!!");
+    //serde_json::from_slice(v)
     let app_user_req: AppUserRequest = serde_json::from_str(json)?;
+    println!("AFTER serde::from_str!!!");
 
     // Do things just like with any other Rust data structure.
 //    println!("res_body.User_Authentication_Key: {}", b.User_Authentication_Key);
