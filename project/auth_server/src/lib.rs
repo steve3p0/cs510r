@@ -2,6 +2,8 @@
 extern crate diesel;
 extern crate dotenv;
 
+extern crate hyper;
+extern crate futures;
 
 extern crate serde_json;
 extern crate serde;
@@ -12,6 +14,11 @@ extern crate serde_derive;
 pub mod models;
 pub mod schema;
 //mod schema { infer_schema!("dotenv:DATABASE_URL"); }
+
+use futures::{future, Future, Stream};
+use hyper::{Body, Chunk, Client, Method, Request, Response, Server, StatusCode, header};
+use hyper::client::HttpConnector;
+use hyper::service::service_fn;
 
 use diesel::prelude::*;
 use dotenv::dotenv;
@@ -74,6 +81,20 @@ pub fn serialize_request(json: &str) -> Result<AppUserRequest, Error>
 //    println!("res_body.Translation_URL: {}", b.Translation_URL);
 
     Ok(app_user_req)
+}
+
+pub fn to_upper(req: Request<Body>) -> Body
+{
+    // A web api to run against. Uppercases the body and returns it back.
+    let body = Body::wrap_stream(req.into_body().map(|chunk|
+    {
+        // uppercase the letters
+        // Original
+        let upper = chunk.iter().map(|byte| byte.to_ascii_uppercase()).collect::<Vec<u8>>();
+        Chunk::from(upper)
+    }));
+
+    body
 }
 
 #[derive(Serialize, Deserialize)]

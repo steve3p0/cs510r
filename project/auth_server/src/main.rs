@@ -32,6 +32,7 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
             let body = Body::from(INDEX);
             Box::new(future::ok(Response::new(body)))
         },
+
         (&Method::GET, "/test.html") => {
             // Run a web query against the web api below
 
@@ -56,6 +57,7 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
                 Response::new(body)
             }))
         },
+
         (&Method::POST, "/web_api") =>
         {
             // A web api to run against. Uppercases the body and returns it back.
@@ -122,6 +124,7 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
             // A web api to run against. Uppercases the body and returns it back.
             let body = to_upper(req);
 
+
             Box::new(future::ok(Response::new(body)))
         },
 
@@ -144,7 +147,8 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
         (&Method::GET, "/json") =>
         {
             let data = vec!["foo", "bar"];
-            let res = match serde_json::to_string(&data) {
+            let res = match serde_json::to_string(&data)
+            {
                 Ok(json) => {
                     // return a json response
                     Response::builder()
@@ -180,19 +184,7 @@ fn response_examples(req: Request<Body>, client: &Client<HttpConnector>)
     }
 }
 
-fn to_upper(req: Request<Body>) -> Body
-{
-    // A web api to run against. Uppercases the body and returns it back.
-    let body = Body::wrap_stream(req.into_body().map(|chunk|
-    {
-        // uppercase the letters
-        // Original
-        let upper = chunk.iter().map(|byte| byte.to_ascii_uppercase()).collect::<Vec<u8>>();
-        Chunk::from(upper)
-    }));
 
-    body
-}
 
 fn main()
 {
@@ -200,21 +192,24 @@ fn main()
 
     let addr = "127.0.0.1:1337".parse().unwrap();
 
-    hyper::rt::run(future::lazy(move || {
+    hyper::rt::run(future::lazy(move ||
+    {
         // Share a `Client` with all `Service`s
         let client = Client::new();
 
-        let new_service = move || {
+        let new_service = move ||
+        {
             // Move a clone of `client` into the `service_fn`.
             let client = client.clone();
-            service_fn(move |req| {
+            service_fn(move | req|
+            {
                 response_examples(req, &client)
             })
         };
 
         let server = Server::bind(&addr)
             .serve(new_service)
-            .map_err(|e| eprintln!("server error: {}", e));
+            .map_err(| e| eprintln!("server error: {}", e));
 
         println!("Listening on http://{}", addr);
 

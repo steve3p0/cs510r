@@ -1,6 +1,14 @@
 extern crate auth_server;
 
+extern crate futures;
+extern crate hyper;
+
 use self::auth_server::*;
+
+use futures::{future, Future, Stream};
+use hyper::{Body, Chunk, Client, Method, Request, Response, Server, StatusCode, header};
+use hyper::client::HttpConnector;
+use hyper::service::service_fn;
 
 #[test]
 fn test_get_credentials()
@@ -25,3 +33,17 @@ fn test_serialize_request()
     assert!(username == "joeblow");
     assert!(password == "password");
 }
+
+
+//#[test]
+//fn test_serialize_toupper()
+//{
+//
+//    //req
+//    let body = to_upper(req);
+//
+//    let req_body: Request<Body> = to_upper(req);
+//
+//    assert!(username == "joeblow");
+//    assert!(password == "password");
+//}
