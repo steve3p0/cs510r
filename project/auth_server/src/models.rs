@@ -7,8 +7,8 @@ pub struct AppUser
     pub Username: String,
     pub Password: String,
     pub UserAuthenticationKey: String,
-    pub TranslationURL: String,
     pub SpeechURL: String,
+    pub TranslationURL: String,
 }
 
 // For later when this API inserts users
@@ -19,6 +19,6 @@ pub struct AppUser
 //    pub Username: &'a str,
 //    pub Password: &'a str,
 //    pub UserAuthenticationKey: &'a str,
-//    pub TranslationURL: &'a str,
 //    pub SpeechURL: &'a str,
+//    pub TranslationURL: &'a str,
 //}

@@ -164,28 +164,16 @@ fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> im
             // each chunk of the body...
             res.into_body().for_each(move |chunk|
             {
-                println!("Before client request execution: 2 ");
-
                 let vec = chunk.to_vec();
                 let response_json = String::from_utf8(vec).unwrap();
                 println!("response_json = {}", response_json);
                 let res_body = serialize_response(&response_json).unwrap();
-
-//                println!("res_body.User_Authentication_Key: {}", res_body.user_authentication_key);
-//                println!("res_body.Speech_URL: {}", res_body.speech_url);
-//                println!("res_body.Translation_URL: {}", res_body.translation_url);
-
-//                println!("res_body.User_Authentication_Key: {}", res_body.User_Authentication_Key);
-//                println!("res_body.Speech_URL: {}", res_body.Speech_URL);
-//                println!("res_body.Translation_URL: {}", res_body.Translation_URL);
 
                 assert_eq!(res_body.Success, expected_res_body.Success);
                 assert_eq!(res_body.User_Authentication_Key, expected_res_body.User_Authentication_Key);
                 assert_eq!(res_body.Speech_URL, expected_res_body.Speech_URL);
                 assert_eq!(res_body.Translation_URL, expected_res_body.Translation_URL);
                 assert_eq!(res_body.Message, expected_res_body.Message);
-
-                //assert_eq!(expected_res_body, res_body);
 
                 io::stdout().write_all(&chunk)
                     .map_err(|e| panic!("example expects stdout is open, error={}", e))

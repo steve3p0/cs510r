@@ -6,8 +6,8 @@ table!
         Username -> Text,
         Password -> Text,
         UserAuthenticationKey -> Text,
-        TranslationURL -> Text,
         SpeechURL -> Text,
+        TranslationURL -> Text,
     }
 }
 
