@@ -1,3 +1,5 @@
+// Influenced by:
+// https://github.com/hyperium/hyper/tree/master/examples
 extern crate hyper;
 extern crate hyper_tls;
 extern crate serde;
@@ -84,7 +86,7 @@ fn test_hyper_client_post_ssl()
         Message: "".to_string()
     };
 
-    let json= r#"{"UserName": "steve@lovoco.co","Password":"123"}"#;
+    let json= r#"{"username": "steve@lovoco.co","password":"123"}"#;
 
     let url = "https://stenopoly.lovoco.co/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
     rt::run(fetch_url(url, json,b));
@@ -102,7 +104,7 @@ fn test_hyper_client_post_ssl_wrongpasswrd()
         Message: "".to_string()
     };
 
-    let json= r#"{"UserName": "steve@lovoco.co","Password":"XXX"}"#;
+    let json= r#"{"username": "steve@lovoco.co","password":"XXX"}"#;
 
     let url = "https://stenopoly.lovoco.co/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
     rt::run(fetch_url(url, json,b));
@@ -121,7 +123,7 @@ fn test_hyper_client_post_ssl_fail()
         Message: "please enter valid user name".to_string()
     };
 
-    let json= r#"{"UserName": "no_such_user@exist.in.db","Password":"password"}"#;
+    let json= r#"{"username": "no_such_user@exist.in.db","password":"password"}"#;
     let url = "https://stenopoly.lovoco.co/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
 
 
@@ -200,10 +202,6 @@ fn serialize_response(json: &str) -> Result<Body, Error>
     let b: Body = serde_json::from_str(json)?;
 
     // Do things just like with any other Rust data structure.
-//    println!("res_body.User_Authentication_Key: {}", b.User_Authentication_Key);
-//    println!("res_body.Speech_URL: {}", b.Speech_URL);
-//    println!("res_body.Translation_URL: {}", b.Translation_URL);
-
     Ok(b)
 }
 

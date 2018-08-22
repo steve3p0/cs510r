@@ -1,3 +1,12 @@
+/////////////////////////////////////////////////////////////////
+// Steve Braich sbraich@pdx.edu
+// Authorization Server - Web API
+/////////////////////////////////////////////////////////////////
+// Heavily influence by:
+// (HTTP POST) https://github.com/actix/examples/tree/master/basics
+// (HTTP POST) https://github.com/hyperium/hyper/tree/master/examples
+// (Diesel - SQL)  https://github.com/diesel-rs/diesel/tree/master/examples/sqlite
+
 #![deny(warnings)]
 extern crate futures;
 extern crate hyper;
