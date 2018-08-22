@@ -15,7 +15,11 @@ use hyper_tls::HttpsConnector;
 use serde_json::Error;
 
 // Sorry about not using snake case names
-// I tried using some serde directives but they didn't work
+// This causes a lot of warnings.  The problem is that these need to be the
+// same as the column names of the table in the database
+//////////////////////////////////////////////////////////////////////////////////
+// I tried using some serde directives that enable lower casing, but it
+// doesn't work
 #[derive(Serialize, Deserialize)]
 #[derive(PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -51,6 +55,8 @@ fn test_auth_api_positive()
     let json= r#"{"username": "joeblow","password":"password"}"#;
 
     let url = "http://127.0.0.1:1337/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
+    //rt::run(fetch_url(url, json,expected_response_body));
+
     rt::run(fetch_url(url, json,expected_response_body));
 }
 
@@ -131,7 +137,6 @@ fn test_hyper_client_post_ssl_fail()
 }
 
 fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> impl Future<Item=(), Error=()>
-//fn fetch_url(url: hyper::Uri) -> impl Future<Item=(), Error=()>
 {
     //let mut req = Request::new(Body::from(json));
     let mut req = Request::new(hyper::body::Body::from(json));
@@ -205,46 +210,3 @@ fn serialize_response(json: &str) -> Result<Body, Error>
     Ok(b)
 }
 
-
-
-
-//struct Body
-//{
-//    userid: u64,
-//    user_authentication_key: String,
-//    user_access_expiration_date: Option<String>,
-//    hours_used: Option<u32>,
-//    hours_available: Option<u32>,
-//    speech_url: String,
-//    translation_url: String,
-//    success: bool,
-//    message: String
-//}
-
-//{
-//    "UserID": 53,
-//    "User_Authentication_Key": "f84089af-2dc4-4119-b671-e8e297b4dd34",
-//    "User_Access_Expiration_Date": null,
-//    "Hours_Used": null,
-//    "Hours_Available": null,
-//    "Speech_URL": "wss://services.govivace.com:49153",
-//    "Translation_URL": "mt.lovoco.co",
-//    "Success": true,
-//    "Message": ""
-//}
-
-//#[derive(Serialize, Deserialize)]
-//#[derive(PartialEq, Eq)]
-//#[serde(rename_all = "lowercase")]
-//struct Body
-//{
-//    //UserID: u64,
-//    User_Authentication_Key: String,
-//    //User_Access_Expiration_Date: Option<String>,
-//    //Hours_Used:  Option<u32>,
-//    //Hours_Available:  Option<u32>,
-//    Speech_URL: String,
-//    Translation_URL: String,
-//    Success: bool,
-//    Message: String
-//}
