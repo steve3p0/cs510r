@@ -35,11 +35,16 @@ struct Body
 // NOTE: YOU MUST CHECK THE OUTPUT
 // These tests unfortunately will always pass!
 /////////////////////////////////////////////////
-// Because the asserts are imbedded in a 'futures' call
-// the test won't panic when if the assert fails
-// I tried to have the future call return back data
-// so I could assert the values outside (after) the
+// Because the asserts are imbedded in a 'futures' call the test won't panic when if the assert fails
+// I tried to have the future call return back data so I could assert the values outside (after) the
 // futures call but couldn't figure that out
+
+
+/// Positive Test for auth_server API
+/// Input:
+/// {"username": "joeblow","password":"password"}
+/// Expected Output:
+/// {"User_Authentication_Key": "authkey123", "Speech_URL": "wss://asr.acme.com:12345", "Translation_URL":"mt1.lovoco.co", "Success":true, "Message":""}
 #[test]
 fn test_auth_api_positive()
 {
@@ -55,24 +60,29 @@ fn test_auth_api_positive()
     let json= r#"{"username": "joeblow","password":"password"}"#;
 
     let url = "http://127.0.0.1:1337/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
-    //rt::run(fetch_url(url, json,expected_response_body));
-
     rt::run(fetch_url(url, json,expected_response_body));
 }
 
+
+/// Invalid User Test for auth_server API
+/// Input:
+/// {"username": "joeblow","password":"XXXX"}
+/// Expected Output:
+/// {"User_Authentication_Key": "00000000-0000-0000-0000-000000000000", "Speech_URL": null, "Translation_URL":null, "Success":false, "Message":"please enter valid user name"}
+/// NOTE: I am not handling cases the lookup in the database fails to retrieve data.
+/// Right now it will produce the following output:
+/// Error parsed HTTP message from remote is incomplete
 #[test]
-// I am not handling cases yet where the lookup doesn't find anything.
-// A panic! is issued instead
 fn test_auth_api_invalid_user()
 {
     let expected_response_body = Body
-        {
-            User_Authentication_Key: Some("authkey123".to_string()),
-            Speech_URL: Some("wss://asr.acme.com:12345".to_string()),
-            Translation_URL: Some("mt1.lovoco.co".to_string()),
-            Success: true,
-            Message: "".to_string()
-        };
+    {
+        User_Authentication_Key: Some("00000000-0000-0000-0000-000000000000".to_string()),
+        Speech_URL: None,
+        Translation_URL: None,
+        Success: true,
+        Message: "please enter valid user name".to_string()
+    };
 
     let json= r#"{"username": "XXuserXdoesXnotXExist","password":"XXXX"}"#;
 
@@ -80,19 +90,26 @@ fn test_auth_api_invalid_user()
     rt::run(fetch_url(url, json,expected_response_body));
 }
 
+/// Invalid User Test for auth_server API
+/// Input:
+/// {"username": "joeblow","password":"XXXX"}
+/// Expected Output:
+/// {"User_Authentication_Key": "00000000-0000-0000-0000-000000000000", "Speech_URL": null, "Translation_URL":null, "Success":false, "Message":"please enter valid user name"}
+/// NOTE: I am not handling cases the lookup in the database fails to retrieve data.
+/// Right now it will produce the following output:
+/// Error parsed HTTP message from remote is incomplete
 #[test]
-// I am not handling cases where the user exists but the password is incorrect.
-// A panic! is issued instead
+
 fn test_auth_api_invalid_password()
 {
     let expected_response_body = Body
-        {
-            User_Authentication_Key: Some("authkey123".to_string()),
-            Speech_URL: Some("wss://asr.acme.com:12345".to_string()),
-            Translation_URL: Some("mt1.lovoco.co".to_string()),
-            Success: true,
-            Message: "".to_string()
-        };
+    {
+        User_Authentication_Key: Some("00000000-0000-0000-0000-000000000000".to_string()),
+        Speech_URL: None,
+        Translation_URL: None,
+        Success: true,
+        Message: "please enter valid password".to_string()
+    };
 
     let json= r#"{"username": "joeblow","password":"XXXX"}"#;
 

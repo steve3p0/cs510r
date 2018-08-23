@@ -19,11 +19,12 @@ use hyper_tls::HttpsConnector;
 #[test]
 fn test_get_credentials()
 {
-    let res = get_credentials("joeblow", "password");
+    let expect_res = r#"{"User_Authentication_Key": "authkey123", "Speech_URL": "wss://asr.acme.com:12345", "Translation_URL":"mt1.lovoco.co", "Success":true, "Message":""}"#;
+    let actual_res = get_credentials("joeblow", "password");
 
-    let expected_res = r#"{"User_Authentication_Key": "authkey123", "Speech_URL": "mt1.lovoco.co", "Success":wss://asr.acme.com:12345, "Message":""}"#;
-    println!("res: {}", res);
-    assert!(res == expected_res);
+    println!("expect_res: {}", expect_res);
+    println!("actual_res: {}", actual_res);
+    assert!(expect_res == actual_res);
 }
 
 #[test]
