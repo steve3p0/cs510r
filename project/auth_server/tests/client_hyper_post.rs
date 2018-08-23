@@ -71,7 +71,7 @@ fn test_auth_api_positive()
 /// {"User_Authentication_Key": "00000000-0000-0000-0000-000000000000", "Speech_URL": null, "Translation_URL":null, "Success":false, "Message":"please enter valid user name"}
 /// NOTE: I am not handling cases the lookup in the database fails to retrieve data.
 /// Right now it will produce the following output:
-/// Error parsed HTTP message from remote is incomplete
+/// Test Failed: parsed HTTP message from remote is incomplete
 #[test]
 fn test_auth_api_invalid_user()
 {
@@ -97,7 +97,7 @@ fn test_auth_api_invalid_user()
 /// {"User_Authentication_Key": "00000000-0000-0000-0000-000000000000", "Speech_URL": null, "Translation_URL":null, "Success":false, "Message":"please enter valid user name"}
 /// NOTE: I am not handling cases the lookup in the database fails to retrieve data.
 /// Right now it will produce the following output:
-/// Error parsed HTTP message from remote is incomplete
+/// Test Failed: parsed HTTP message from remote is incomplete
 #[test]
 
 fn test_auth_api_invalid_password()
@@ -160,11 +160,11 @@ fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> im
         })
         // If all good, just tell the user...
         .map(|_| {
-            println!("\n\nDone.");
+            println!("\n\nTest Passed.");
         })
         // If there was an error, let the user know...
         .map_err(|err| {
-            eprintln!("Error {}", err);
+            eprintln!("Test Failed: {}", err);
         })
 }
 
