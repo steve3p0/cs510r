@@ -59,12 +59,12 @@ so I could assert the values after (and outside of) the futures call.  I don't s
 
 Additionally, I tried to pass in params by reference to the futures call so that I could set those params after the HTTP POST.  
 My thinking was that since those params are passed by reference, I could evaluate (assert) the results after the call. 
-These future calls are performed in the same thread or it is performed a synchronous manner so returning a value or 
-passing a result by value SHOULD be trivial.  It's not. 
+These future calls are performed in the same thread (it has been observed that is performed in a synchronous manner)
+so returning a value or passing a result by reference SHOULD be trivial.  Unfortunately, with rust, it's not trivial. 
 
-I kept getting errors stating that my param passed by reference "does not live long enough". 
+I kept getting errors stating that my param passed by reference "error[E0597]: 'param' does not live long enough". 
 From what I can tell, this is by design.  I found no reference to help get around this. 
-There are some things I can try.  There is something called a Telegram client that if implemented in rust may resolve this, 
+There are some things I can still try.  There is something called a Telegram client that if implemented in rust may resolve this, 
 but that will require further research.
 
 If you want to test this outside of rust, make sure that the web server is running (cargo run) and then execute the following curl command at a terminal command line:
