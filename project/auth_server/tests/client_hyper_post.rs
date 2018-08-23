@@ -78,8 +78,6 @@ fn test_auth_api_invalid_password()
     rt::run(fetch_url(url, json,expected_response_body));
 }
 
-
-
 #[test]
 fn test_hyper_client_post_ssl()
 {
@@ -132,15 +130,12 @@ fn test_hyper_client_post_ssl_fail()
     let json= r#"{"username": "no_such_user@exist.in.db","password":"password"}"#;
     let url = "https://stenopoly.lovoco.co/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
 
-
     rt::run(fetch_url(url, json,b));
 }
 
 fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> impl Future<Item=(), Error=()>
 {
-    //let mut req = Request::new(Body::from(json));
     let mut req = Request::new(hyper::body::Body::from(json));
-    //hyper::body
 
     *req.method_mut() = Method::POST;
     *req.uri_mut() = url.clone();
@@ -151,21 +146,15 @@ fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> im
     );
 
     let https = HttpsConnector::new(4).expect("TLS initialization failed");
-    let client = Client::builder()
-        .build::<_, hyper::Body>(https);
-
-    println!("Before client request execution: 1 ");
-    //println!("req: {}", req);
+    let client = Client::builder().build::<_, hyper::Body>(https);
 
     client
         // Fetch the url...
         //.get(url)
         .request(req)
         // And then, if we get a response back...
-        .and_then(move | res| {
-            println!("Response: {}", res.status());
-            println!("Headers: {:#?}", res.headers());
-
+        .and_then(move | res|
+        {
             // The body is a stream, and for_each returns a new Future
             // when the stream is finished, and calls the closure on
             // each chunk of the body...
@@ -184,7 +173,6 @@ fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> im
 
                 io::stdout().write_all(&chunk)
                     .map_err(|e| panic!("example expects stdout is open, error={}", e))
-
             })
         })
         // If all good, just tell the user...
@@ -199,14 +187,8 @@ fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> im
 
 fn serialize_response(json: &str) -> Result<Body, Error>
 {
-    // Some JSON input data as a &str. Maybe this comes from the user.
-
-    // Parse the string of data into a Person object. This is exactly the
-    // same function as the one that produced serde_json::Value above, but
-    // now we are asking it for a Person as output.
     let b: Body = serde_json::from_str(json)?;
 
-    // Do things just like with any other Rust data structure.
     Ok(b)
 }
 

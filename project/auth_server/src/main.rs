@@ -25,19 +25,12 @@ use hyper::service::service_fn;
 use std::ascii::AsciiExt;
 
 static NOTFOUND: &[u8] = b"Not Found";
-static INDEX: &[u8] = b"<a href=\"test.html\">test.html</a>";
 
 fn response_examples(req: Request<Body>)
                      -> Box<Future<Item=Response<Body>, Error=hyper::Error> + Send>
 {
     match (req.method(), req.uri().path())
     {
-        (&Method::GET, "/") | (&Method::GET, "/index.html") =>
-        {
-            let body = Body::from(INDEX);
-            Box::new(future::ok(Response::new(body)))
-        },
-
         (&Method::POST, "/api/LoginAPI/WinAppAuthAPI") =>
         {
             let body = post_auth_request_handler(req);

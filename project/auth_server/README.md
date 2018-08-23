@@ -1,6 +1,9 @@
-# basics
+# Web API - Authentication 
+This is a simple web api to authenticate a username and password stored in a database on a web server.  If a user is authenticated via this web api, additional credentials are passed back to allow a user to access resources. 
 
 ## Usage
+
+
 
 ### server
 

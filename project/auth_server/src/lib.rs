@@ -65,14 +65,10 @@ pub fn get_credentials(username: &str, password: &str) -> String
     }
     "#.to_string();
 
-    //"Message": "please enter valid password"
-    // please enter valid user name
-
     let user: models::AppUser = app_users
         .filter(Username.eq(username))
         .filter(Password.eq(password))
         .first(&connection)
-        //please enter valid user name
         .unwrap_or_else(| _| panic!("Unable to find user {}", username));
 
     //if user.Password != password
