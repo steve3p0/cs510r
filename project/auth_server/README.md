@@ -58,7 +58,9 @@ I tried to have the future call return data
 so I could assert the values after (and outside of) the futures call.  I don't see any mechanism for this at all.
 
 Additionally, I tried to pass in params by reference to the futures call so that I could set those params after the HTTP POST.  
-My thinking was that since those params are passed by reference, I could evaluate (assert) the results after the call.  
+My thinking was that since those params are passed by reference, I could evaluate (assert) the results after the call. 
+These future calls are performed in the same thread or it is performed a synchronous manner so returning a value or 
+passing a result by value SHOULD be trivial.  It's not. 
 
 I kept getting errors stating that my param passed by reference "does not live long enough". 
 From what I can tell, this is by design.  I found no reference to help get around this. 
