@@ -61,6 +61,28 @@ fn test_auth_api_positive()
 }
 
 #[test]
+// I am not handling cases yet where the lookup doesn't find anything.
+// A panic! is issued instead
+fn test_auth_api_invalid_user()
+{
+    let expected_response_body = Body
+        {
+            User_Authentication_Key: Some("authkey123".to_string()),
+            Speech_URL: Some("wss://asr.acme.com:12345".to_string()),
+            Translation_URL: Some("mt1.lovoco.co".to_string()),
+            Success: true,
+            Message: "".to_string()
+        };
+
+    let json= r#"{"username": "XXuserXdoesXnotXExist","password":"XXXX"}"#;
+
+    let url = "http://127.0.0.1:1337/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
+    rt::run(fetch_url(url, json,expected_response_body));
+}
+
+#[test]
+// I am not handling cases where the user exists but the password is incorrect.
+// A panic! is issued instead
 fn test_auth_api_invalid_password()
 {
     let expected_response_body = Body
@@ -78,61 +100,6 @@ fn test_auth_api_invalid_password()
     rt::run(fetch_url(url, json,expected_response_body));
 }
 
-#[test]
-fn test_hyper_client_post_ssl()
-{
-    let b = Body
-    {
-        User_Authentication_Key: Some("f84089af-2dc4-4119-b671-e8e297b4dd34".to_string()),
-        Speech_URL: Some("wss://services.govivace.com:49153".to_string()),
-        Translation_URL: Some("mt.lovoco.co".to_string()),
-        Success: true,
-        Message: "".to_string()
-    };
-
-    let json= r#"{"username": "steve@lovoco.co","password":"123"}"#;
-
-    let url = "https://stenopoly.lovoco.co/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
-    rt::run(fetch_url(url, json,b));
-}
-
-#[test]
-fn test_hyper_client_post_ssl_wrongpasswrd()
-{
-    let b = Body
-    {
-        User_Authentication_Key: Some("f84089af-2dc4-4119-b671-e8e297b4dd34".to_string()),
-        Speech_URL: Some("wss://services.govivace.com:49153".to_string()),
-        Translation_URL: Some("mt.lovoco.co".to_string()),
-        Success: true,
-        Message: "".to_string()
-    };
-
-    let json= r#"{"username": "steve@lovoco.co","password":"XXX"}"#;
-
-    let url = "https://stenopoly.lovoco.co/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
-    rt::run(fetch_url(url, json,b));
-}
-
-
-#[test]
-fn test_hyper_client_post_ssl_fail()
-{
-    let b = Body
-    {
-        User_Authentication_Key: Some("00000000-0000-0000-0000-000000000000".to_string()),
-        Speech_URL: None,
-        Translation_URL: None,
-        Success: false,
-        Message: "please enter valid user name".to_string()
-    };
-
-    let json= r#"{"username": "no_such_user@exist.in.db","password":"password"}"#;
-    let url = "https://stenopoly.lovoco.co/api/LoginAPI/WinAppAuthAPI".parse().unwrap();
-
-    rt::run(fetch_url(url, json,b));
-}
-
 fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> impl Future<Item=(), Error=()>
 {
     let mut req = Request::new(hyper::body::Body::from(json));
@@ -141,7 +108,6 @@ fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> im
     *req.uri_mut() = url.clone();
     req.headers_mut().insert(
         hyper::header::CONTENT_TYPE,
-        //HeaderValue::from_static("application/json")
         hyper::header::HeaderValue::from_static("application/json")
     );
 
@@ -162,7 +128,7 @@ fn fetch_url(url: hyper::Uri, json: &'static str, expected_res_body: Body) -> im
             {
                 let vec = chunk.to_vec();
                 let response_json = String::from_utf8(vec).unwrap();
-                println!("response_json = {}", response_json);
+                //println!("response_json = {}", response_json);
                 let res_body = serialize_response(&response_json).unwrap();
 
                 assert_eq!(res_body.Success, expected_res_body.Success);

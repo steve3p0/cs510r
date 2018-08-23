@@ -44,7 +44,6 @@ pub fn get_credentials(username: &str, password: &str) -> String
 
     // I should probably create an AppUser object and set these
     // fields, then deserialize to json.
-    // Didn't have time.
     let invalid_user_msg = r#"
     {
         "User_Authentication_Key": "00000000-0000-0000-0000-000000000000",
@@ -69,6 +68,10 @@ pub fn get_credentials(username: &str, password: &str) -> String
         .filter(Username.eq(username))
         .filter(Password.eq(password))
         .first(&connection)
+        // In the case that the unwrap fails I would like to return
+        //     invalid_pass_msg or invalid_user_msg
+        // I can't. This or_else expression must result in a panic! apparently
+        //.unwrap_or_else( invalid_user_msg );
         .unwrap_or_else(| _| panic!("Unable to find user {}", username));
 
     //if user.Password != password
@@ -83,7 +86,6 @@ pub fn get_credentials(username: &str, password: &str) -> String
                 &user.TranslationURL,
                 true,
     );
-    //print!("json_creds: ", json_creds);
 
     json_creds
 }
